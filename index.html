@@ -10,12 +10,13 @@
 <style>
   :root{
     --bg:#f6f7f8; --paper:#fff; --ink:#111827; --muted:#6b7280; --line:#e5e7eb; --accent:#2f2f2f;
+    --pill:#d1d5db; /* light grey for Grand Total */
   }
   *{ box-sizing:border-box }
   html,body{ height:auto; min-height:100%; }
   body{
     margin:0; background:var(--bg); color:var(--ink);
-    font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font:13.5px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     -webkit-print-color-adjust:exact; print-color-adjust:exact;
   }
 
@@ -33,23 +34,20 @@
   .logo img{ max-width:100%; max-height:100%; object-fit:contain }
   .t1{ font-size:20px; font-weight:800; letter-spacing:.02em }
   .t2{ font-size:12px; color:var(--muted); margin-top:2px }
-  .inv-title{ font-size:32px; letter-spacing:.04em; font-weight:900; color:var(--accent) }
+  .inv-title{ font-size:30px; letter-spacing:.04em; font-weight:900; color:var(--accent) }
 
-  /* Slim black→grey progress bar */
+  /* Top divider only */
   .divider{
-    height:3px;
+    height:3px; border-radius:3px; margin:12px 0 4px;
     background:linear-gradient(90deg, var(--accent) 0 15%, #c7c9cc 15% 100%);
-    border-radius:3px;
-    margin:12px 0 4px;
   }
-  /* top-right site text — now hidden per request */
   .site{ display:none; }
 
-  /* Top meta */
+  /* Meta blocks */
   .meta{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:8px }
   .box{ border:1px solid var(--line); border-radius:10px; padding:14px 16px; background:#fff }
-  .box h4{ margin:0 0 8px; font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:#4b5563 }
-  .mtitle{ font-weight:800; font-size:18px; margin:0 0 6px }
+  .box h4{ margin:0 0 8px; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#4b5563 }
+  .mtitle{ font-weight:800; font-size:17px; margin:0 0 6px }
   .kv{ display:grid; grid-template-columns:140px 1fr; gap:6px 12px; font-size:13px }
   .label{ color:var(--muted) }
 
@@ -58,13 +56,14 @@
   .desc{ margin-top:8px; font-size:13px; color:#374151; text-align:right }
 
   /* Items */
-  h3.section{ margin:18px 0 10px; font-size:16px; font-weight:800; letter-spacing:.02em; text-align:center }
+  h3.section{ margin:18px 0 10px; font-size:15px; font-weight:800; letter-spacing:.02em; text-align:center }
   table{ width:100%; border-collapse:collapse; }
   thead th{
-    text-transform:uppercase; letter-spacing:.05em; font-size:11px; color:#4b5563;
-    border-bottom:2px solid var(--accent); padding:8px 10px; background:#f3f4f6; text-align:center;
+    text-transform:uppercase; letter-spacing:.05em; font-size:10.5px; color:#4b5563;
+    border-bottom:none; /* removed underline -> bar stays only on top */
+    padding:8px 10px; background:#f3f4f6; text-align:center;
   }
-  tbody td{ padding:10px; border-bottom:1px solid #eceff1; text-align:center; vertical-align:middle }
+  tbody td{ padding:9px 10px; border-bottom:1px solid #eceff1; text-align:center; vertical-align:middle; font-size:12.5px }
   tbody td.desc-cell{ text-align:left }
   tbody tr:nth-child(2n){ background:#fafafa }
   td.num{ white-space:nowrap }
@@ -77,7 +76,10 @@
   .sum{ border:1px solid var(--line); border-radius:10px; background:#fff; padding:12px 14px }
   .sum .row{ display:flex; justify-content:space-between; margin:4px 0; }
   .sum .row .label{ color:#6b7280 }
-  .grand{ margin-top:8px; background:#111827; color:#fff; padding:12px 14px; border-radius:10px; font-weight:900; display:flex; justify-content:space-between }
+  .grand{
+    margin-top:8px; background:var(--pill); color:#111827; padding:12px 14px; border-radius:12px;
+    font-weight:900; display:flex; justify-content:space-between
+  }
 
   /* Thanks & signature */
   .thanks{ margin-top:16px; font-weight:700 }
@@ -89,36 +91,32 @@
   /* Footer */
   .footer{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:18px; padding-top:14px; border-top:1px solid #e5e7eb; color:#374151 }
   .footer div{ display:flex; align-items:center; gap:10px; }
-  .icon{ width:24px; height:24px; border:1px solid #d1d5db; border-radius:50%; display:grid; place-items:center; }
-  .icon svg{ width:14px; height:14px; stroke:#6b7280; fill:none; stroke-width:2; }
+  .icon{
+    width:28px; height:28px; border:1px solid #d1d5db; border-radius:50%; display:grid; place-items:center;
+    padding:3px; background:#fff;
+  }
+  .icon svg{ width:18px; height:18px; stroke:#6b7280; fill:none; stroke-width:2; display:block; }
   .footer small{ font-size:12px }
 
-  
-/* ===== PRINT FIX — FORCE SINGLE PAGE ON iPHONE ===== */
-@media print {
-  @page { size: A4 portrait; margin: 5mm; } /* smaller page margins */
-  .sheet{
-    width: 200mm;            /* A4 minus margins */
-    margin: 0 auto;
-    padding: 3mm 4mm 5mm;    /* compact padding for print */
-    border: none; box-shadow: none;
-    page-break-inside: avoid; break-inside: avoid;
-  }
-  body{ font-size: 12.5px; }         /* slightly smaller text */
-  table thead th{ font-size: 10px; }
-  tbody td{ padding: 6px; }          /* tighter cell spacing */
-  tr, td, th { page-break-inside: avoid; break-inside: avoid; }
-}
-
-/* iOS Safari — apply slight zoom to force single-page fit */
-@supports (-webkit-touch-callout: none) {
+  /* ===== PRINT FIX — FORCE SINGLE PAGE ON iPHONE ===== */
   @media print {
-    body { zoom: 0.88; }             /* fine-tune: 0.90 / 0.86 if still too long */
-    .sheet{ width:auto; max-width:none; padding: 3mm; }
+    @page { size: A4 portrait; margin: 5mm; }
+    .sheet{
+      width: 200mm; margin: 0 auto; padding: 3mm 4mm 5mm;
+      border: none; box-shadow: none;
+      page-break-inside: avoid; break-inside: avoid;
+    }
+    body{ font-size: 12.5px; }
+    table thead th{ font-size: 10px; }
+    tbody td{ padding: 6px; }
+    tr, td, th { page-break-inside: avoid; break-inside: avoid; }
   }
-}
-
-  
+  @supports (-webkit-touch-callout: none) {
+    @media print {
+      body { zoom: 0.88; }
+      .sheet{ width:auto; max-width:none; padding: 3mm; }
+    }
+  }
 </style>
 </head>
 <body>
@@ -212,7 +210,8 @@
       </div>
       <div>
         <span class="icon">
-          <svg viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v0l-10 7L2 6v0a2 2 0 0 1 2-2z"/><path d="M22 8l-10 7L2 8"/></svg>
+          <!-- Clean envelope icon -->
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" ry="2"/><path d="M3 7l9 6 9-6"/></svg>
         </span> <small id="from_email_footer"></small>
       </div>
       <div>
@@ -246,8 +245,7 @@
   const brand = get('from_name','');
   setText('brand_name', brand || 'Invoice');
   setText('brand_sub', get('from_web',''));
-  // top-right is hidden via CSS, but we won't fill it either:
-  setText('brand_site','');
+  setText('brand_site',''); // hidden
 
   // Logo
   const logo = get('from_logo','').trim();
@@ -366,59 +364,41 @@
     window.addEventListener('load', () => { try { setTimeout(() => window.print(), 0); } catch {} });
   }
 
-  // ===== Hide titles/labels when values are empty (non-invasive add-on) =====
-
-// Hide the <div class="label"> immediately before a value cell in a .kv grid
-function hideKVLabelIfEmpty(id){
-  const v = document.getElementById(id);
-  if(!v) return;
-  const isEmpty = (v.textContent || '').trim()==='' || v.style.display==='none';
-  if(isEmpty){
-    const label = v.previousElementSibling;
-    if(label && label.classList && label.classList.contains('label')){
-      label.style.display = 'none';
+  // ===== Hide titles/labels when values are empty =====
+  function hideKVLabelIfEmpty(id){
+    const v = document.getElementById(id);
+    if(!v) return;
+    const isEmpty = (v.textContent || '').trim()==='' || v.style.display==='none';
+    if(isEmpty){
+      const label = v.previousElementSibling;
+      if(label && label.classList && label.classList.contains('label')){
+        label.style.display = 'none';
+      }
     }
   }
-}
-
-// Hide the entire parent line (<p>) in the Payment box if value empty
-function hidePaymentLineIfEmpty(id){
-  const v = document.getElementById(id);
-  if(!v) return;
-  const isEmpty = (v.textContent || '').trim()==='' || v.style.display==='none';
-  if(isEmpty && v.parentElement){
-    v.parentElement.style.display = 'none';
+  function hidePaymentLineIfEmpty(id){
+    const v = document.getElementById(id);
+    if(!v) return;
+    const isEmpty = (v.textContent || '').trim()==='' || v.style.display==='none';
+    if(isEmpty && v.parentElement){
+      v.parentElement.style.display = 'none';
+    }
   }
-}
-
-// Hide the whole footer column (icon + text) if value empty
-function hideFooterColIfEmpty(id){
-  const v = document.getElementById(id);
-  if(!v) return;
-  const isEmpty = (v.textContent || '').trim()==='' || v.style.display==='none';
-  if(isEmpty){
-    const col = v.closest('div'); // the footer column container
-    if(col) col.style.display = 'none';
+  function hideFooterColIfEmpty(id){
+    const v = document.getElementById(id);
+    if(!v) return;
+    const isEmpty = (v.textContent || '').trim()==='' || v.style.display==='none';
+    if(isEmpty){
+      const col = v.closest('div');
+      if(col) col.style.display = 'none';
+    }
   }
-}
-
-// Apply to KV grids (client + invoice meta)
-[
-  'client_phone','client_email','client_website',
-  'client_business_number','client_address',
-  'invoice_number','invoice_date'
-].forEach(hideKVLabelIfEmpty);
-
-// Apply to Payment lines (<p> rows)
-[
-  'company_abn','bank_name','bank_acc_name','bank_acc_no','bank_bsb'
-].forEach(hidePaymentLineIfEmpty);
-
-// Apply to Footer columns
-[
-  'from_phone_footer','from_email_footer','from_address_footer'
-].forEach(hideFooterColIfEmpty);
-
+  ['client_phone','client_email','client_website','client_business_number','client_address','invoice_number','invoice_date']
+    .forEach(hideKVLabelIfEmpty);
+  ['company_abn','bank_name','bank_acc_name','bank_acc_no','bank_bsb']
+    .forEach(hidePaymentLineIfEmpty);
+  ['from_phone_footer','from_email_footer','from_address_footer']
+    .forEach(hideFooterColIfEmpty);
 </script>
 </body>
 </html>
