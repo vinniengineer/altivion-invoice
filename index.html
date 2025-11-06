@@ -8,23 +8,17 @@
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
 <style>
-  :root{
-    --bg:#f6f7f8; --paper:#fff; --ink:#111827; --muted:#6b7280; --line:#e5e7eb; --accent:#2f2f2f;
-  }
+  :root{ --bg:#f6f7f8; --paper:#fff; --ink:#111827; --muted:#6b7280; --line:#e5e7eb; --accent:#2f2f2f; }
   *{ box-sizing:border-box }
-  html,body{ height:auto; min-height:100%; }
+  html,body{ height:100% }
   body{
     margin:0; background:var(--bg); color:var(--ink);
     font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     -webkit-print-color-adjust:exact; print-color-adjust:exact;
   }
-
-  .sheet{
-    width:900px; max-width:95vw; margin:22px auto;
-    background:var(--paper); border:1px solid var(--line); border-radius:12px;
-    box-shadow:0 10px 30px rgba(0,0,0,.05);
-    padding:28px 32px 26px;
-  }
+  .sheet{ width:900px; max-width:95vw; margin:22px auto; background:var(--paper);
+          border:1px solid var(--line); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.05);
+          padding:28px 32px 26px; }
 
   /* Header */
   .header{ display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center }
@@ -35,15 +29,8 @@
   .t2{ font-size:12px; color:var(--muted); margin-top:2px }
   .inv-title{ font-size:32px; letter-spacing:.04em; font-weight:900; color:var(--accent) }
 
-  /* Slim black→grey progress bar */
-  .divider{
-    height:3px;
-    background:linear-gradient(90deg, var(--accent) 0 15%, #c7c9cc 15% 100%);
-    border-radius:3px;
-    margin:12px 0 4px;
-  }
-  /* top-right site text — now hidden per request */
-  .site{ display:none; }
+  .divider{ height:3px; background:linear-gradient(90deg, var(--accent) 0 15%, #c7c9cc 15% 100%); border-radius:3px; margin:12px 0 4px }
+  .site{ text-align:right; color:#4b5563; font-size:12px; margin-bottom:12px }
 
   /* Top meta */
   .meta{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:8px }
@@ -53,9 +40,10 @@
   .kv{ display:grid; grid-template-columns:140px 1fr; gap:6px 12px; font-size:13px }
   .label{ color:var(--muted) }
 
+  /* right meta is borderless */
   .meta-plain{ border:none; background:transparent; padding:0; text-align:right; }
   .meta-plain .kv{ grid-template-columns:1fr 140px; margin-top:4px }
-  .desc{ margin-top:8px; font-size:13px; color:#374151; text-align:right }
+  .desc{ margin-top:8px; font-size:13px; color:#374151 }
 
   /* Items */
   h3.section{ margin:18px 0 10px; font-size:16px; font-weight:800; letter-spacing:.02em; text-align:center }
@@ -64,7 +52,7 @@
     text-transform:uppercase; letter-spacing:.05em; font-size:11px; color:#4b5563;
     border-bottom:2px solid var(--accent); padding:8px 10px; background:#f3f4f6; text-align:center;
   }
-  tbody td{ padding:10px; border-bottom:1px solid #eceff1; text-align:center; vertical-align:middle }
+  tbody td{ padding:10px; border-bottom:1px solid #eceff1; text-align:center }
   tbody td.desc-cell{ text-align:left }
   tbody tr:nth-child(2n){ background:#fafafa }
   td.num{ white-space:nowrap }
@@ -89,20 +77,17 @@
   /* Footer */
   .footer{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:18px; padding-top:14px; border-top:1px solid #e5e7eb; color:#374151 }
   .footer div{ display:flex; align-items:center; gap:10px; }
-  .icon{ width:24px; height:24px; border:1px solid #d1d5db; border-radius:50%; display:grid; place-items:center; }
-  .icon svg{ width:14px; height:14px; stroke:#6b7280; fill:none; stroke-width:2; }
-  .footer small{ font-size:12px }
+  .icon{ width:28px; height:28px; border:1px solid #d1d5db; border-radius:50%; display:grid; place-items:center; }
+  .icon svg{ width:16px; height:16px; stroke:#6b7280; fill:none; stroke-width:2; }
 
   /* Print */
-  @page { size: A4; margin: 10mm; }
+  @page { size:A4; margin:14mm }
   thead{ display:table-header-group }
   tfoot{ display:table-footer-group }
   @media print{
     body{ background:#fff }
-    .sheet{ width: 190mm; margin:0 auto; box-shadow:none; border:none; padding:0 0 6mm 0; }
-    /* keep gradient bar in print — no override */
-    .footer small{ font-size:11px }
-    .sheet{ page-break-after:auto; }
+    .sheet{ box-shadow:none; border:none; }
+    .divider{ background:#000 }
   }
 </style>
 </head>
@@ -143,7 +128,7 @@
           <div class="label">Invoice no :</div><div id="invoice_number"></div>
           <div class="label">Date :</div><div id="invoice_date"></div>
         </div>
-        <h4 style="margin:10px 0 4px; text-transform:none; letter-spacing:0; font-weight:700; text-align:right">Invoice Description</h4>
+        <h4 style="margin:10px 0 4px; text-transform:none; letter-spacing:0; font-weight:700">Invoice Description</h4>
         <div class="desc" id="invoice_description"></div>
       </div>
     </section>
@@ -152,11 +137,11 @@
     <table>
       <thead>
         <tr>
-          <th style="width:130px">Date of Work</th>
+          <th style="width:60px">No</th>
           <th>Description</th>
-          <th style="width:120px">Price / Hourly Rate</th>
-          <th style="width:80px">Cost Qty</th>
-          <th style="width:140px">Cost Total</th>
+          <th style="width:80px">Qty</th>
+          <th style="width:120px">Price</th>
+          <th style="width:140px">Total</th>
         </tr>
       </thead>
       <tbody id="items_body"></tbody>
@@ -165,14 +150,11 @@
     <section class="totals">
       <div class="pay">
         <h5>Payment Method :</h5>
-        <p><strong>Company ABN</strong> : <span id="company_abn"></span></p>
         <p><strong>Bank Name</strong> : <span id="bank_name"></span></p>
         <p><strong>Account Name</strong> : <span id="bank_acc_name"></span></p>
-        <p><strong>Account Number</strong> : <span id="bank_acc_no"></span></p>
-        <p><strong>Account BSB</strong> : <span id="bank_bsb"></span></p>
+        <p><strong>Account Number</strong> : <span id="bank_acc_no"></span> <span id="bank_routing_wrap"></span></p>
       </div>
       <div class="sum">
-        <div class="row"><div class="label">Total Hours :</div><div id="total_hours">0</div></div>
         <div class="row"><div class="label">Sub Total :</div><div id="subtotal">$0.00</div></div>
         <div class="row"><div class="label">GST <span id="tax_rate_label"></span> :</div><div id="taxes">$0.00</div></div>
         <div class="grand"><div>Grand Total :</div><div id="grand_total">$0.00</div></div>
@@ -193,106 +175,170 @@
       <div>
         <span class="icon">
           <svg viewBox="0 0 24 24"><path d="M2 3h4l2 5-3 2a16 16 0 0 0 7 7l2-3 5 2v4a2 2 0 0 1-2 2c-9.94 0-18-8.06-18-18a2 2 0 0 1 2-2z"/></svg>
-        </span> <small id="from_phone_footer"></small>
+        </span> <span id="from_phone_footer"></span>
       </div>
       <div>
         <span class="icon">
-          <svg viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v0l-10 7L2 6v0a2 2 0 0 1 2-2z"/><path d="M22 8l-10 7L2 8"/></svg>
-        </span> <small id="from_email_footer"></small>
+          <svg viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v0l-10 7L2 6v0a2 2 0 0 1 2-2z"/><path d="M22 8l-10 7L2 8"/><path d="M2 18h20"/></svg>
+        </span> <span id="from_email_footer"></span>
       </div>
       <div>
         <span class="icon">
           <svg viewBox="0 0 24 24"><path d="M12 21s7-4.35 7-10a7 7 0 0 0-14 0c0 5.65 7 10 7 10z"/><circle cx="12" cy="11" r="3"/></svg>
-        </span> <small id="from_address_footer"></small>
+        </span> <span id="from_address_footer"></span>
       </div>
     </footer>
   </div>
 
 <script>
-  // ---- helpers
+  // --- helpers (enhanced)
   const qp = new URLSearchParams(location.search);
   const get = (k, d='') => qp.get(k) ?? d;
   const ccy = get('ccy','AUD');
 
   const clean = v => {
     if(v==null||v==='') return 0;
-    const n = parseFloat(String(v).replace(/[^0-9.-]/g,'')); return isNaN(n)?0:n;
+    const n = parseFloat(String(v).replace(/[^0-9.-]/g,''));
+    return isNaN(n)?0:n;
   };
   const money = n => Number(n||0).toLocaleString(undefined,{style:'currency',currency:ccy});
   const esc = s => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 
+  // Show/hide a plain element (no label pairing)
   function setText(id, value){
-    const el = document.getElementById(id); if(!el) return;
-    if(value && String(value).trim()!==''){ el.textContent = value; el.style.display=''; }
-    else { el.textContent = ''; el.style.display='none'; }
+    const el = document.getElementById(id);
+    if(!el) return;
+    const show = value && String(value).trim()!=='';
+    if (show) { el.textContent = value; el.style.display=''; }
+    else { el.textContent=''; el.style.display='none'; }
+  }
+
+  // Show/hide a KV "row" where markup is:
+  //   <div class="label">Title</div><div id="valueId"></div>
+  // Hides BOTH the label cell and value cell when empty.
+  function setTextKV(id, value){
+    const valEl = document.getElementById(id);
+    if(!valEl) return;
+    const labelEl = valEl.previousElementSibling; // immediate label cell
+    const show = value && String(value).trim()!=='';
+    if (show){
+      valEl.textContent = value;
+      valEl.style.display = '';
+      if (labelEl && labelEl.classList.contains('label')) labelEl.style.display = '';
+    } else {
+      valEl.textContent = '';
+      valEl.style.display = 'none';
+      if (labelEl && labelEl.classList.contains('label')) labelEl.style.display = 'none';
+    }
+  }
+
+  // Show/hide the entire parent line (<p>, <div>, etc.) when empty text span
+  function setTextHideParent(id, value){
+    const el = document.getElementById(id);
+    if(!el) return;
+    const show = value && String(value).trim()!=='';
+    if (show){
+      el.textContent = value;
+      el.style.display = '';
+      if (el.parentElement) el.parentElement.style.display = '';
+    } else {
+      el.textContent = '';
+      el.style.display = 'none';
+      if (el.parentElement) el.parentElement.style.display = 'none';
+    }
+  }
+
+  // Like setTextHideParent, but hides grandparent .footer column (icon+text)
+  function setTextHideFooterCol(id, value){
+    const el = document.getElementById(id);
+    if(!el) return;
+    const show = value && String(value).trim()!=='';
+    if (show){
+      el.textContent = value;
+      if (el.parentElement) el.parentElement.style.display = '';
+      if (el.parentElement && el.parentElement.parentElement) el.parentElement.parentElement.style.display = '';
+    } else {
+      el.textContent = '';
+      if (el.parentElement) el.parentElement.style.display = 'none';
+      if (el.parentElement && el.parentElement.parentElement) el.parentElement.parentElement.style.display = 'none';
+    }
   }
 
   // Header brand
   const brand = get('from_name','');
   setText('brand_name', brand || 'Invoice');
   setText('brand_sub', get('from_web',''));
-  // top-right is hidden via CSS, but we won't fill it either:
-  setText('brand_site','');
+  setText('brand_site', get('from_web',''));
 
   // Logo
   const logo = get('from_logo','').trim();
-  if (logo) { document.getElementById('from_logo_box').innerHTML = `<img src="${logo}" alt="logo">`; }
+  if (logo) {
+    document.getElementById('from_logo_box').innerHTML =
+      `<img src="${logo}" alt="logo">`;
+  }
 
-  // Title + invoice number
-  setText('inv_title', 'INVOICE');
-  setText('invoice_number', get('invoice_number',''));
+  // Title + invoice number (title stays; number row hides if empty)
+  const invNum = get('invoice_number','');
+  document.getElementById('inv_title').textContent = 'INVOICE';
+  setTextKV('invoice_number', invNum);
 
   // Date formatting
   (function(){
-    const raw = get('invoice_date',''); let out = raw;
+    const raw = get('invoice_date','');
+    let out = raw;
     const d = new Date(raw);
     if (!isNaN(d.getTime())) {
       const day = String(d.getDate()).padStart(2,'0');
       const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
       out = `${day} ${months[d.getMonth()]} ${d.getFullYear()}`;
     }
-    setText('invoice_date', out);
+    setTextKV('invoice_date', out);
   })();
 
-  // Client
-  setText('client_name', get('client_name',''));
-  setText('client_phone', get('client_phone',''));
-  setText('client_email', get('client_email',''));
-  setText('client_website', get('client_website',''));
-  setText('client_business_number', get('client_business_number',''));
-  setText('client_address', get('client_address',''));
+  // Client fields (KV pairs)
+  setText('client_name', get('client_name','')); // title only; no label pair
+  setTextKV('client_phone', get('client_phone',''));
+  setTextKV('client_email', get('client_email',''));
+  setTextKV('client_website', get('client_website',''));
+  setTextKV('client_business_number', get('client_business_number',''));
+  setTextKV('client_address', get('client_address',''));
 
   // Description
   setText('invoice_description', get('invoice_description',''));
 
-  // Payment / bank
-  setText('company_abn', get('from_business_no',''));
-  setText('bank_name', get('bank_name',''));
-  setText('bank_acc_name', get('bank_acc_name',''));
-  setText('bank_acc_no', get('bank_acc_no',''));
-  const bsb = get('bank_bsb','') || get('bank_routing','');
-  setText('bank_bsb', bsb);
+  // Payment / bank (hide whole <p> lines when empty)
+  setTextHideParent('bank_name', get('bank_name',''));
+  setTextHideParent('bank_acc_name', get('bank_acc_name',''));
+  setTextHideParent('bank_acc_no', get('bank_acc_no',''));
+  const routing = get('bank_routing','').trim();
+  if(routing){
+    const wrap = document.getElementById('bank_routing_wrap');
+    wrap.textContent = ` · BSB/Route ${routing}`;
+    wrap.style.display = '';
+  }else{
+    const wrap = document.getElementById('bank_routing_wrap');
+    wrap.textContent = '';
+    wrap.style.display = 'none';
+  }
 
-  // Footer contact from company
-  setText('from_phone_footer', get('from_phone',''));
-  setText('from_email_footer', get('from_email',''));
-  setText('from_address_footer', get('from_address',''));
+  // Footer contact from company (hide icon+text column when empty)
+  setTextHideFooterCol('from_phone_footer', get('from_phone',''));
+  setTextHideFooterCol('from_email_footer', get('from_email',''));
+  setTextHideFooterCol('from_address_footer', get('from_address',''));
 
-  // Items parser — rows: (date?)::title::price::qty::total
+  // Items parser — same format: "title::price::qty::total" joined by "||"
   function parseItems(str){
     if(!str) return [];
-    const rowSep = /(\|\||%7C%7C)/i, colSep = /(::|%3A%3A)/i;
+    const rowSep = /(\|\||%7C%7C)/i;
+    const colSep = /(::|%3A%3A)/i;
     return str.split(rowSep).filter(s => !rowSep.test(s) && s!=='')
       .map(row => {
-        const parts = row.split(colSep).filter(s => !colSep.test(s));
-        let date='', title='', price='', qty='', total='';
-        if(parts.length === 5){ [date,title,price,qty,total] = parts; }
-        else { [title,price,qty,total] = parts; }
+        const fields = row.split(colSep).filter(s => !colSep.test(s));
+        const [title='', price='', qty='', total=''] = fields;
         return {
-          date: decodeURIComponent(date || ''),
-          title: decodeURIComponent(title || ''),
+          title: decodeURIComponent(title||''),
           price: clean(price),
-          qty: parseFloat(qty || 0) || 0,
+          qty: parseFloat(qty||0) || 0,
           total: clean(total)
         };
       });
@@ -301,21 +347,20 @@
   const items = parseItems(get('items',''));
   const tbody = document.getElementById('items_body');
   let subtotalFromItems = 0;
-  items.forEach(it => {
+
+  items.forEach((it, idx) => {
     subtotalFromItems += it.total || 0;
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td>${esc(it.date)}</td>
+      <td>${idx+1}</td>
       <td class="desc-cell">${esc(it.title)}</td>
-      <td class="num">${money(it.price)}</td>
       <td>${(it.qty ?? 0).toLocaleString()}</td>
+      <td class="num">${money(it.price)}</td>
       <td class="num">${money(it.total)}</td>`;
     tbody.appendChild(tr);
   });
 
-  // Totals + hours
-  setText('total_hours', get('total_hours',''));
-
+  // Totals
   let subtotal = clean(get('subtotal',''));
   if (!subtotal && subtotalFromItems) subtotal = subtotalFromItems;
 
@@ -329,26 +374,40 @@
   let grand = clean(get('grand_total',''));
   if (!grand) grand = subtotal + taxes;
 
-  setText('subtotal', money(subtotal));
-  setText('taxes', money(taxes));
+  document.getElementById('subtotal').textContent = money(subtotal);
+  document.getElementById('taxes').textContent = money(taxes);
   document.getElementById('tax_rate_label').textContent =
     (taxRate || taxRate===0) ? `(${(taxRate*100).toFixed(0)}%)` : '';
-  setText('grand_total', money(grand));
+  document.getElementById('grand_total').textContent = money(grand);
 
   // Signature
+  const sig = get('signature','').trim();
   const signerText = [get('signer_name','').trim(), get('signer_role','').trim()].filter(Boolean).join(' · ');
   if (signerText) document.getElementById('signer').textContent = signerText;
-  else document.getElementById('sign_block').style.display = 'none';
+  if (!sig && !signerText) document.getElementById('sign_block').style.display = 'none';
 
   // Terms (optional)
   const terms = get('terms','').trim();
   if(terms) document.getElementById('terms').textContent = terms;
   else document.getElementById('terms').style.display = 'none';
 
-  // Auto-print
+  // --- Auto-print and auto-close behavior
   const autoPrint = /^(1|true)$/i.test(get('print','').trim());
+  const autoClose = /^(1|true)$/i.test(get('autoclose','').trim()); // optional close even w/o print
+  const closeDelay = Math.max(0, Number(get('close_after','4000')) || 4000);
+
+  function scheduleClose(){
+    // Attempt to close after a delay. Works best if opened via window.open / target=_blank.
+    setTimeout(() => { try { window.close(); } catch {} }, closeDelay);
+  }
+
   if (autoPrint) {
-    window.addEventListener('load', () => { try { setTimeout(() => window.print(), 0); } catch {} });
+    window.addEventListener('load', () => {
+      try { setTimeout(() => window.print(), 0); } catch {}
+      scheduleClose();
+    });
+  } else if (autoClose) {
+    window.addEventListener('load', scheduleClose);
   }
 </script>
 </body>
