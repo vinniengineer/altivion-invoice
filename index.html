@@ -191,7 +191,7 @@
   </div>
 
 <script>
-  // --- helpers (enhanced)
+  // --- helpers (original behavior preserved)
   const qp = new URLSearchParams(location.search);
   const get = (k, d='') => qp.get(k) ?? d;
   const ccy = get('ccy','AUD');
@@ -204,22 +204,19 @@
   const money = n => Number(n||0).toLocaleString(undefined,{style:'currency',currency:ccy});
   const esc = s => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 
-  // Show/hide a plain element (no label pairing)
+  // Keep your original setText for plain elements
   function setText(id, value){
     const el = document.getElementById(id);
     if(!el) return;
-    const show = value && String(value).trim()!=='';
-    if (show) { el.textContent = value; el.style.display=''; }
-    else { el.textContent=''; el.style.display='none'; }
+    if(value && String(value).trim()!==''){ el.textContent = value; el.style.display=''; }
+    else { el.textContent = ''; el.style.display='none'; }
   }
 
-  // Show/hide a KV "row" where markup is:
-  //   <div class="label">Title</div><div id="valueId"></div>
-  // Hides BOTH the label cell and value cell when empty.
+  // NEW: hide the label + value cell when empty (works for the .kv grid only)
   function setTextKV(id, value){
     const valEl = document.getElementById(id);
     if(!valEl) return;
-    const labelEl = valEl.previousElementSibling; // immediate label cell
+    const labelEl = valEl.previousElementSibling; // the <div class="label"> before it
     const show = value && String(value).trim()!=='';
     if (show){
       valEl.textContent = value;
@@ -229,38 +226,6 @@
       valEl.textContent = '';
       valEl.style.display = 'none';
       if (labelEl && labelEl.classList.contains('label')) labelEl.style.display = 'none';
-    }
-  }
-
-  // Show/hide the entire parent line (<p>, <div>, etc.) when empty text span
-  function setTextHideParent(id, value){
-    const el = document.getElementById(id);
-    if(!el) return;
-    const show = value && String(value).trim()!=='';
-    if (show){
-      el.textContent = value;
-      el.style.display = '';
-      if (el.parentElement) el.parentElement.style.display = '';
-    } else {
-      el.textContent = '';
-      el.style.display = 'none';
-      if (el.parentElement) el.parentElement.style.display = 'none';
-    }
-  }
-
-  // Like setTextHideParent, but hides grandparent .footer column (icon+text)
-  function setTextHideFooterCol(id, value){
-    const el = document.getElementById(id);
-    if(!el) return;
-    const show = value && String(value).trim()!=='';
-    if (show){
-      el.textContent = value;
-      if (el.parentElement) el.parentElement.style.display = '';
-      if (el.parentElement && el.parentElement.parentElement) el.parentElement.parentElement.style.display = '';
-    } else {
-      el.textContent = '';
-      if (el.parentElement) el.parentElement.style.display = 'none';
-      if (el.parentElement && el.parentElement.parentElement) el.parentElement.parentElement.style.display = 'none';
     }
   }
 
@@ -277,10 +242,10 @@
       `<img src="${logo}" alt="logo">`;
   }
 
-  // Title + invoice number (title stays; number row hides if empty)
+  // Title + invoice number
   const invNum = get('invoice_number','');
   document.getElementById('inv_title').textContent = 'INVOICE';
-  setTextKV('invoice_number', invNum);
+  setTextKV('invoice_number', invNum); // hide "Invoice no :" label when empty
 
   // Date formatting
   (function(){
@@ -292,11 +257,11 @@
       const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
       out = `${day} ${months[d.getMonth()]} ${d.getFullYear()}`;
     }
-    setTextKV('invoice_date', out);
+    setTextKV('invoice_date', out); // hide "Date :" label when empty
   })();
 
-  // Client fields (KV pairs)
-  setText('client_name', get('client_name','')); // title only; no label pair
+  // Client fields (hide label+value when empty)
+  setText('client_name', get('client_name','')); // title only
   setTextKV('client_phone', get('client_phone',''));
   setTextKV('client_email', get('client_email',''));
   setTextKV('client_website', get('client_website',''));
@@ -306,25 +271,21 @@
   // Description
   setText('invoice_description', get('invoice_description',''));
 
-  // Payment / bank (hide whole <p> lines when empty)
-  setTextHideParent('bank_name', get('bank_name',''));
-  setTextHideParent('bank_acc_name', get('bank_acc_name',''));
-  setTextHideParent('bank_acc_no', get('bank_acc_no',''));
+  // Payment / bank (unchanged formatting; titles here are bold text inside <p>, not KV)
+  setText('bank_name', get('bank_name',''));
+  setText('bank_acc_name', get('bank_acc_name',''));
+  setText('bank_acc_no', get('bank_acc_no',''));
   const routing = get('bank_routing','').trim();
   if(routing){
-    const wrap = document.getElementById('bank_routing_wrap');
-    wrap.textContent = ` · BSB/Route ${routing}`;
-    wrap.style.display = '';
+    document.getElementById('bank_routing_wrap').textContent = ` · BSB/Route ${routing}`;
   }else{
-    const wrap = document.getElementById('bank_routing_wrap');
-    wrap.textContent = '';
-    wrap.style.display = 'none';
+    document.getElementById('bank_routing_wrap').style.display = 'none';
   }
 
-  // Footer contact from company (hide icon+text column when empty)
-  setTextHideFooterCol('from_phone_footer', get('from_phone',''));
-  setTextHideFooterCol('from_email_footer', get('from_email',''));
-  setTextHideFooterCol('from_address_footer', get('from_address',''));
+  // Footer contact from company
+  setText('from_phone_footer', get('from_phone',''));
+  setText('from_email_footer', get('from_email',''));
+  setText('from_address_footer', get('from_address',''));
 
   // Items parser — same format: "title::price::qty::total" joined by "||"
   function parseItems(str){
@@ -391,23 +352,10 @@
   if(terms) document.getElementById('terms').textContent = terms;
   else document.getElementById('terms').style.display = 'none';
 
-  // --- Auto-print and auto-close behavior
+  // Auto-print (unchanged)
   const autoPrint = /^(1|true)$/i.test(get('print','').trim());
-  const autoClose = /^(1|true)$/i.test(get('autoclose','').trim()); // optional close even w/o print
-  const closeDelay = Math.max(0, Number(get('close_after','4000')) || 4000);
-
-  function scheduleClose(){
-    // Attempt to close after a delay. Works best if opened via window.open / target=_blank.
-    setTimeout(() => { try { window.close(); } catch {} }, closeDelay);
-  }
-
   if (autoPrint) {
-    window.addEventListener('load', () => {
-      try { setTimeout(() => window.print(), 0); } catch {}
-      scheduleClose();
-    });
-  } else if (autoClose) {
-    window.addEventListener('load', scheduleClose);
+    window.addEventListener('load', () => { try { setTimeout(() => window.print(), 0); } catch {} });
   }
 </script>
 </body>
