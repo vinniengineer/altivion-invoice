@@ -16,9 +16,11 @@
     font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     -webkit-print-color-adjust:exact; print-color-adjust:exact;
   }
-  .sheet{ width:900px; max-width:95vw; margin:22px auto; background:var(--paper);
-          border:1px solid var(--line); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.05);
-          padding:28px 32px 26px; }
+  .sheet{
+    width:900px; max-width:95vw; margin:22px auto; background:var(--paper);
+    border:1px solid var(--line); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.05);
+    padding:28px 32px 26px;
+  }
 
   /* Header */
   .header{ display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center }
@@ -29,21 +31,26 @@
   .t2{ font-size:12px; color:var(--muted); margin-top:2px }
   .inv-title{ font-size:32px; letter-spacing:.04em; font-weight:900; color:var(--accent) }
 
-  .divider{ height:3px; background:linear-gradient(90deg, var(--accent) 0 15%, #c7c9cc 15% 100%); border-radius:3px; margin:12px 0 4px }
-  .site{ text-align:right; color:#4b5563; font-size:12px; margin-bottom:12px }
+  /* Robust printable bar: left black segment + grey rest */
+  .divider{
+    height:2px; margin:12px 0 4px; border-radius:2px;
+    background:
+      linear-gradient(#111827,#111827) left/35mm 2px no-repeat,
+      linear-gradient(#c7c9cc,#c7c9cc) left/100% 2px no-repeat;
+  }
 
-  /* Top meta */
+  /* Top-right site line removed per request */
+  .site{ display:none; }
+
+  /* Meta */
   .meta{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:8px }
   .box{ border:1px solid var(--line); border-radius:10px; padding:14px 16px; background:#fff }
   .box h4{ margin:0 0 8px; font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:#4b5563 }
   .mtitle{ font-weight:800; font-size:18px; margin:0 0 6px }
   .kv{ display:grid; grid-template-columns:140px 1fr; gap:6px 12px; font-size:13px }
   .label{ color:var(--muted) }
-
-  /* right meta is borderless */
   .meta-plain{ border:none; background:transparent; padding:0; text-align:right; }
-  .meta-plain .kv{ grid-template-columns:1fr 140px; margin-top:4px }
-  .desc{ margin-top:8px; font-size:13px; color:#374151 }
+  .meta-plain .kv{ grid-template-columns:1fr 200px; margin-top:4px } /* a little wider for long dates */
 
   /* Items */
   h3.section{ margin:18px 0 10px; font-size:16px; font-weight:800; letter-spacing:.02em; text-align:center }
@@ -57,7 +64,7 @@
   tbody tr:nth-child(2n){ background:#fafafa }
   td.num{ white-space:nowrap }
 
-  /* Totals & payment */
+  /* Totals / payment */
   .totals{ display:grid; grid-template-columns:1fr 260px; gap:16px; margin-top:16px; align-items:start }
   .pay{ border:1px solid var(--line); border-radius:10px; padding:12px 14px; background:#fff }
   .pay h5{ margin:0 0 8px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; font-size:12px; color:#4b5563 }
@@ -74,20 +81,24 @@
   .sigline{ width:240px; border-bottom:1px solid #d1d5db; height:50px }
   .sigmeta{ text-align:right; font-size:12px; color:#4b5563 }
 
-  /* Footer */
-  .footer{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:18px; padding-top:14px; border-top:1px solid #e5e7eb; color:#374151 }
-  .footer div{ display:flex; align-items:center; gap:10px; }
-  .icon{ width:28px; height:28px; border:1px solid #d1d5db; border-radius:50%; display:grid; place-items:center; }
-  .icon svg{ width:16px; height:16px; stroke:#6b7280; fill:none; stroke-width:2; }
+  /* Footer (smaller so address won’t wrap) */
+  .footer{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:18px; padding-top:14px; border-top:1px solid #e5e7eb; color:#374151; font-size:12px }
+  .footer div{ display:flex; align-items:center; gap:8px; }
+  .icon{ width:24px; height:24px; border:1px solid #d1d5db; border-radius:50%; display:grid; place-items:center; }
+  .icon svg{ width:14px; height:14px; stroke:#6b7280; fill:none; stroke-width:2; }
 
   /* Print */
-  @page { size:A4; margin:14mm }
+  @page { size:A4; margin:10mm } /* ≈ “Minimum” */
   thead{ display:table-header-group }
   tfoot{ display:table-footer-group }
   @media print{
     body{ background:#fff }
-    .sheet{ box-shadow:none; border:none; }
-    .divider{ background:#000 }
+    .sheet{ box-shadow:none; border:none; margin:0; width:auto; padding:0 }
+    .divider{
+      background:
+        linear-gradient(#000,#000) left/35mm 2px no-repeat,
+        linear-gradient(#c7c9cc,#c7c9cc) left/100% 2px no-repeat;
+    }
   }
 </style>
 </head>
@@ -103,8 +114,9 @@
       </div>
       <div class="right"><div class="inv-title" id="inv_title">INVOICE</div></div>
     </header>
+
     <div class="divider"></div>
-    <div class="site" id="brand_site"></div>
+    <!-- removed top-right website line -->
 
     <section class="meta">
       <!-- CLIENT -->
@@ -122,14 +134,13 @@
         </div>
       </div>
 
-      <!-- INVOICE META (borderless) -->
+      <!-- RIGHT META as kv rows (no bordered box, no site on top-right) -->
       <div class="box meta-plain">
         <div class="kv">
           <div class="label">Invoice no :</div><div id="invoice_number"></div>
           <div class="label">Date :</div><div id="invoice_date"></div>
+          <div class="label">Invoice Description :</div><div id="invoice_description"></div>
         </div>
-        <h4 style="margin:10px 0 4px; text-transform:none; letter-spacing:0; font-weight:700">Invoice Description</h4>
-        <div class="desc" id="invoice_description"></div>
       </div>
     </section>
 
@@ -150,9 +161,11 @@
     <section class="totals">
       <div class="pay">
         <h5>Payment Method :</h5>
+        <p><strong>Company ABN</strong> : <span id="company_abn"></span></p>
         <p><strong>Bank Name</strong> : <span id="bank_name"></span></p>
         <p><strong>Account Name</strong> : <span id="bank_acc_name"></span></p>
-        <p><strong>Account Number</strong> : <span id="bank_acc_no"></span> <span id="bank_routing_wrap"></span></p>
+        <p><strong>Account Number</strong> : <span id="bank_acc_no"></span></p>
+        <p><strong>Account BSB</strong> : <span id="bank_bsb"></span></p>
       </div>
       <div class="sum">
         <div class="row"><div class="label">Sub Total :</div><div id="subtotal">$0.00</div></div>
@@ -179,7 +192,7 @@
       </div>
       <div>
         <span class="icon">
-          <svg viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v0l-10 7L2 6v0a2 2 0 0 1 2-2z"/><path d="M22 8l-10 7L2 8"/><path d="M2 18h20"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v0l-10 7L2 6v0a2 2 0 0 1 2-2z"/><path d="M22 8l-10 7L2 8"/></svg>
         </span> <span id="from_email_footer"></span>
       </div>
       <div>
@@ -191,15 +204,14 @@
   </div>
 
 <script>
-  // --- helpers (same behavior as your original)
+  // --- helpers
   const qp = new URLSearchParams(location.search);
   const get = (k, d='') => qp.get(k) ?? d;
   const ccy = get('ccy','AUD');
 
   const clean = v => {
     if(v==null||v==='') return 0;
-    const n = parseFloat(String(v).replace(/[^0-9.-]/g,''));
-    return isNaN(n)?0:n;
+    const n = parseFloat(String(v).replace(/[^0-9.-]/g,'')); return isNaN(n)?0:n;
   };
   const money = n => Number(n||0).toLocaleString(undefined,{style:'currency',currency:ccy});
   const esc = s => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -211,28 +223,22 @@
     else { el.textContent = ''; el.style.display='none'; }
   }
 
-  // Header brand
-  const brand = get('from_name','');
-  setText('brand_name', brand || 'Invoice');
+  // Brand
+  setText('brand_name', get('from_name','Invoice'));
   setText('brand_sub', get('from_web',''));
-  setText('brand_site', get('from_web',''));
 
   // Logo
   const logo = get('from_logo','').trim();
-  if (logo) {
-    document.getElementById('from_logo_box').innerHTML =
-      `<img src="${logo}" alt="logo">`;
-  }
+  if (logo) document.getElementById('from_logo_box').innerHTML = `<img src="${logo}" alt="logo">`;
 
-  // Title + invoice number
-  const invNum = get('invoice_number','');
-  document.getElementById('inv_title').textContent = invNum ? `INVOICE` : 'INVOICE';
-  setText('invoice_number', invNum);
+  // Title
+  document.getElementById('inv_title').textContent = 'INVOICE';
 
-  // Date formatting
+  // Right meta
+  setText('invoice_number', get('invoice_number',''));
+
   (function(){
-    const raw = get('invoice_date','');
-    let out = raw;
+    const raw = get('invoice_date',''); let out = raw;
     const d = new Date(raw);
     if (!isNaN(d.getTime())) {
       const day = String(d.getDate()).padStart(2,'0');
@@ -241,8 +247,9 @@
     }
     setText('invoice_date', out);
   })();
+  setText('invoice_description', get('invoice_description',''));
 
-  // Client fields (extra supported: client_website, client_address)
+  // Client
   setText('client_name', get('client_name',''));
   setText('client_phone', get('client_phone',''));
   setText('client_email', get('client_email',''));
@@ -250,43 +257,29 @@
   setText('client_business_number', get('client_business_number',''));
   setText('client_address', get('client_address',''));
 
-  // Description
-  setText('invoice_description', get('invoice_description',''));
-
   // Payment / bank
+  setText('company_abn', get('company_abn', get('from_business_no',''))); // ABN from from_business_no by default
   setText('bank_name', get('bank_name',''));
   setText('bank_acc_name', get('bank_acc_name',''));
   setText('bank_acc_no', get('bank_acc_no',''));
-  const routing = get('bank_routing','').trim();
-  if(routing){
-    document.getElementById('bank_routing_wrap').textContent = ` · BSB/Route ${routing}`;
-  }else{
-    document.getElementById('bank_routing_wrap').style.display = 'none';
-  }
+  // split BSB as its own (no “/Route”)
+  setText('bank_bsb', get('bank_bsb', get('bank_routing','')));
 
-  // Footer contact from company
+  // Footer from company
   setText('from_phone_footer', get('from_phone',''));
   setText('from_email_footer', get('from_email',''));
   setText('from_address_footer', get('from_address',''));
 
-  // Items parser — same format: "title::price::qty::total" joined by "||"
+  // Items parser — "title::price::qty::total" joined by "||"
   function parseItems(str){
     if(!str) return [];
-    const rowSep = /(\|\||%7C%7C)/i;
-    const colSep = /(::|%3A%3A)/i;
-    return str.split(rowSep).filter(s => !rowSep.test(s) && s!=='')
-      .map(row => {
-        const fields = row.split(colSep).filter(s => !colSep.test(s));
-        const [title='', price='', qty='', total=''] = fields;
-        return {
-          title: decodeURIComponent(title||''),
-          price: clean(price),
-          qty: parseFloat(qty||0) || 0,
-          total: clean(total)
-        };
-      });
+    const rowSep = /(\|\||%7C%7C)/i, colSep = /(::|%3A%3A)/i;
+    return str.split(rowSep).filter(s => !rowSep.test(s) && s!=='').map(row => {
+      const fields = row.split(colSep).filter(s => !colSep.test(s));
+      const [title='', price='', qty='', total=''] = fields;
+      return { title: decodeURIComponent(title||''), price: clean(price), qty: parseFloat(qty||0)||0, total: clean(total) };
+    });
   }
-
   const items = parseItems(get('items',''));
   const tbody = document.getElementById('items_body');
   let subtotalFromItems = 0;
@@ -317,17 +310,16 @@
   let grand = clean(get('grand_total',''));
   if (!grand) grand = subtotal + taxes;
 
-  document.getElementById('subtotal').textContent = money(subtotal);
-  document.getElementById('taxes').textContent = money(taxes);
+  setText('subtotal', money(subtotal));
+  setText('taxes', money(taxes));
   document.getElementById('tax_rate_label').textContent =
     (taxRate || taxRate===0) ? `(${(taxRate*100).toFixed(0)}%)` : '';
-  document.getElementById('grand_total').textContent = money(grand);
+  setText('grand_total', money(grand));
 
   // Signature
-  const sig = get('signature','').trim();
   const signerText = [get('signer_name','').trim(), get('signer_role','').trim()].filter(Boolean).join(' · ');
   if (signerText) document.getElementById('signer').textContent = signerText;
-  if (!sig && !signerText) document.getElementById('sign_block').style.display = 'none';
+  else document.getElementById('sign_block').style.display = 'none';
 
   // Terms (optional)
   const terms = get('terms','').trim();
