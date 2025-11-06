@@ -350,6 +350,60 @@
   if (autoPrint) {
     window.addEventListener('load', () => { try { setTimeout(() => window.print(), 0); } catch {} });
   }
+
+  // ===== Hide titles/labels when values are empty (non-invasive add-on) =====
+
+// Hide the <div class="label"> immediately before a value cell in a .kv grid
+function hideKVLabelIfEmpty(id){
+  const v = document.getElementById(id);
+  if(!v) return;
+  const isEmpty = (v.textContent || '').trim()==='' || v.style.display==='none';
+  if(isEmpty){
+    const label = v.previousElementSibling;
+    if(label && label.classList && label.classList.contains('label')){
+      label.style.display = 'none';
+    }
+  }
+}
+
+// Hide the entire parent line (<p>) in the Payment box if value empty
+function hidePaymentLineIfEmpty(id){
+  const v = document.getElementById(id);
+  if(!v) return;
+  const isEmpty = (v.textContent || '').trim()==='' || v.style.display==='none';
+  if(isEmpty && v.parentElement){
+    v.parentElement.style.display = 'none';
+  }
+}
+
+// Hide the whole footer column (icon + text) if value empty
+function hideFooterColIfEmpty(id){
+  const v = document.getElementById(id);
+  if(!v) return;
+  const isEmpty = (v.textContent || '').trim()==='' || v.style.display==='none';
+  if(isEmpty){
+    const col = v.closest('div'); // the footer column container
+    if(col) col.style.display = 'none';
+  }
+}
+
+// Apply to KV grids (client + invoice meta)
+[
+  'client_phone','client_email','client_website',
+  'client_business_number','client_address',
+  'invoice_number','invoice_date'
+].forEach(hideKVLabelIfEmpty);
+
+// Apply to Payment lines (<p> rows)
+[
+  'company_abn','bank_name','bank_acc_name','bank_acc_no','bank_bsb'
+].forEach(hidePaymentLineIfEmpty);
+
+// Apply to Footer columns
+[
+  'from_phone_footer','from_email_footer','from_address_footer'
+].forEach(hideFooterColIfEmpty);
+
 </script>
 </body>
 </html>
