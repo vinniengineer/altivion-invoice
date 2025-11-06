@@ -35,8 +35,15 @@
   .t2{ font-size:12px; color:var(--muted); margin-top:2px }
   .inv-title{ font-size:32px; letter-spacing:.04em; font-weight:900; color:var(--accent) }
 
-  .divider{ height:3px; background:linear-gradient(90deg, var(--accent) 0 15%, #c7c9cc 15% 100%); border-radius:3px; margin:12px 0 4px }
-  .site{ text-align:right; color:#4b5563; font-size:12px; margin-bottom:12px }
+  /* Slim black→grey progress bar */
+  .divider{
+    height:3px;
+    background:linear-gradient(90deg, var(--accent) 0 15%, #c7c9cc 15% 100%);
+    border-radius:3px;
+    margin:12px 0 4px;
+  }
+  /* top-right site text — now hidden per request */
+  .site{ display:none; }
 
   /* Top meta */
   .meta{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:8px }
@@ -93,9 +100,8 @@
   @media print{
     body{ background:#fff }
     .sheet{ width: 190mm; margin:0 auto; box-shadow:none; border:none; padding:0 0 6mm 0; }
-    .divider{ background:#000 }
+    /* keep gradient bar in print — no override */
     .footer small{ font-size:11px }
-    /* Avoid stray last blank page */
     .sheet{ page-break-after:auto; }
   }
 </style>
@@ -210,15 +216,13 @@
 
   const clean = v => {
     if(v==null||v==='') return 0;
-    const n = parseFloat(String(v).replace(/[^0-9.-]/g,''));
-    return isNaN(n)?0:n;
+    const n = parseFloat(String(v).replace(/[^0-9.-]/g,'')); return isNaN(n)?0:n;
   };
   const money = n => Number(n||0).toLocaleString(undefined,{style:'currency',currency:ccy});
   const esc = s => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 
   function setText(id, value){
-    const el = document.getElementById(id);
-    if(!el) return;
+    const el = document.getElementById(id); if(!el) return;
     if(value && String(value).trim()!==''){ el.textContent = value; el.style.display=''; }
     else { el.textContent = ''; el.style.display='none'; }
   }
@@ -227,13 +231,12 @@
   const brand = get('from_name','');
   setText('brand_name', brand || 'Invoice');
   setText('brand_sub', get('from_web',''));
-  setText('brand_site', get('from_web',''));
+  // top-right is hidden via CSS, but we won't fill it either:
+  setText('brand_site','');
 
   // Logo
   const logo = get('from_logo','').trim();
-  if (logo) {
-    document.getElementById('from_logo_box').innerHTML = `<img src="${logo}" alt="logo">`;
-  }
+  if (logo) { document.getElementById('from_logo_box').innerHTML = `<img src="${logo}" alt="logo">`; }
 
   // Title + invoice number
   setText('inv_title', 'INVOICE');
@@ -241,8 +244,7 @@
 
   // Date formatting
   (function(){
-    const raw = get('invoice_date','');
-    let out = raw;
+    const raw = get('invoice_date',''); let out = raw;
     const d = new Date(raw);
     if (!isNaN(d.getTime())) {
       const day = String(d.getDate()).padStart(2,'0');
@@ -264,7 +266,6 @@
   setText('invoice_description', get('invoice_description',''));
 
   // Payment / bank
-  // company_abn = from_business_no (ABN)
   setText('company_abn', get('from_business_no',''));
   setText('bank_name', get('bank_name',''));
   setText('bank_acc_name', get('bank_acc_name',''));
@@ -280,12 +281,10 @@
   // Items parser — rows: (date?)::title::price::qty::total
   function parseItems(str){
     if(!str) return [];
-    const rowSep = /(\|\||%7C%7C)/i;
-    const colSep = /(::|%3A%3A)/i;
+    const rowSep = /(\|\||%7C%7C)/i, colSep = /(::|%3A%3A)/i;
     return str.split(rowSep).filter(s => !rowSep.test(s) && s!=='')
       .map(row => {
         const parts = row.split(colSep).filter(s => !colSep.test(s));
-        // support 4 or 5 fields
         let date='', title='', price='', qty='', total='';
         if(parts.length === 5){ [date,title,price,qty,total] = parts; }
         else { [title,price,qty,total] = parts; }
@@ -302,7 +301,6 @@
   const items = parseItems(get('items',''));
   const tbody = document.getElementById('items_body');
   let subtotalFromItems = 0;
-
   items.forEach(it => {
     subtotalFromItems += it.total || 0;
     const tr = document.createElement('tr');
@@ -347,7 +345,7 @@
   if(terms) document.getElementById('terms').textContent = terms;
   else document.getElementById('terms').style.display = 'none';
 
-  // Auto-print (prints; user’s dialog controls destination)
+  // Auto-print
   const autoPrint = /^(1|true)$/i.test(get('print','').trim());
   if (autoPrint) {
     window.addEventListener('load', () => { try { setTimeout(() => window.print(), 0); } catch {} });
