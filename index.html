@@ -93,57 +93,33 @@
   .icon svg{ width:14px; height:14px; stroke:#6b7280; fill:none; stroke-width:2; }
   .footer small{ font-size:12px }
 
-  /* Print */
-  @page { size: A4; margin: 10mm; }
-  thead{ display:table-header-group }
-  tfoot{ display:table-footer-group }
-  @media print{
-    body{ background:#fff }
-    .sheet{ width: 190mm; margin:0 auto; box-shadow:none; border:none; padding:0 0 6mm 0; }
-    /* keep gradient bar in print — no override */
-    .footer small{ font-size:11px }
-    .sheet{ page-break-after:auto; }
+  
+/* ===== PRINT FIX — FORCE SINGLE PAGE ON iPHONE ===== */
+@media print {
+  @page { size: A4 portrait; margin: 5mm; } /* smaller page margins */
+  .sheet{
+    width: 200mm;            /* A4 minus margins */
+    margin: 0 auto;
+    padding: 3mm 4mm 5mm;    /* compact padding for print */
+    border: none; box-shadow: none;
+    page-break-inside: avoid; break-inside: avoid;
   }
+  body{ font-size: 12.5px; }         /* slightly smaller text */
+  table thead th{ font-size: 10px; }
+  tbody td{ padding: 6px; }          /* tighter cell spacing */
+  tr, td, th { page-break-inside: avoid; break-inside: avoid; }
+}
 
-  /* Print */
-  @page { size: A4; margin: 10mm; }
-  thead{ display:table-header-group }
-  tfoot{ display:table-footer-group }
-
-  @media print{
-    body{ background:#fff }
-    .sheet{ width: 190mm; margin:0 auto; box-shadow:none; border:none; padding:0 0 6mm 0; }
-    /* keep gradient bar in print — no override */
-    .footer small{ font-size:11px }
-    .sheet{ page-break-after:auto; }
-  }
-
-  /* ===== MOBILE PRINT PATCH (iOS) ===== */
-  @page { size: A4; margin: 6mm; } /* ajusta margem */
+/* iOS Safari — apply slight zoom to force single-page fit */
+@supports (-webkit-touch-callout: none) {
   @media print {
-    .sheet{
-      width: calc(210mm - 12mm);
-      margin: 0 auto;
-      padding: 4mm 4mm 6mm;
-      border: none;
-      box-shadow: none;
-      page-break-inside: avoid;
-    }
-    body{ font-size: 13px; }
-    table thead th{ font-size: 10px; }
-    tbody td{ padding: 8px; }
+    body { zoom: 0.88; }             /* fine-tune: 0.90 / 0.86 if still too long */
+    .sheet{ width:auto; max-width:none; padding: 3mm; }
   }
-  @supports (-webkit-touch-callout: none) {
-    @media print {
-      .sheet{
-        width: calc(210mm - 10mm);
-        padding: 4mm;
-      }
-    }
-  }
-</style>
+}
 
   
+</style>
 </head>
 <body>
   <div class="sheet">
