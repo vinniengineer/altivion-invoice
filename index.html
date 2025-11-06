@@ -10,18 +10,19 @@
 <style>
   :root{
     --bg:#f6f7f8; --paper:#fff; --ink:#111827; --muted:#6b7280; --line:#e5e7eb; --accent:#2f2f2f;
-    --soft:#f3f4f6;
   }
   *{ box-sizing:border-box }
-  html,body{ height:100% }
+  html,body{ height:auto; min-height:100%; }
   body{
     margin:0; background:var(--bg); color:var(--ink);
     font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     -webkit-print-color-adjust:exact; print-color-adjust:exact;
   }
+
   .sheet{
-    width:900px; max-width:95vw; margin:22px auto; background:var(--paper);
-    border:1px solid var(--line); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.05);
+    width:900px; max-width:95vw; margin:22px auto;
+    background:var(--paper); border:1px solid var(--line); border-radius:12px;
+    box-shadow:0 10px 30px rgba(0,0,0,.05);
     padding:28px 32px 26px;
   }
 
@@ -34,11 +35,8 @@
   .t2{ font-size:12px; color:var(--muted); margin-top:2px }
   .inv-title{ font-size:32px; letter-spacing:.04em; font-weight:900; color:var(--accent) }
 
-  /* thin divider; keep print friendly (not solid black) */
-  .divider{
-    height:3px; border-radius:3px; margin:12px 0 4px;
-    background:linear-gradient(90deg, #2e2e2e 0 18%, #cfd2d6 18% 100%);
-  }
+  .divider{ height:3px; background:linear-gradient(90deg, var(--accent) 0 15%, #c7c9cc 15% 100%); border-radius:3px; margin:12px 0 4px }
+  .site{ text-align:right; color:#4b5563; font-size:12px; margin-bottom:12px }
 
   /* Top meta */
   .meta{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:8px }
@@ -48,21 +46,20 @@
   .kv{ display:grid; grid-template-columns:140px 1fr; gap:6px 12px; font-size:13px }
   .label{ color:var(--muted) }
 
-  /* right meta is borderless */
   .meta-plain{ border:none; background:transparent; padding:0; text-align:right; }
   .meta-plain .kv{ grid-template-columns:1fr 140px; margin-top:4px }
-  .desc{ margin-top:6px; font-size:13px; color:#374151; text-align:right }
+  .desc{ margin-top:8px; font-size:13px; color:#374151; text-align:right }
 
   /* Items */
   h3.section{ margin:18px 0 10px; font-size:16px; font-weight:800; letter-spacing:.02em; text-align:center }
-  table.items{ width:100%; border-collapse:collapse; }
-  .items thead th{
+  table{ width:100%; border-collapse:collapse; }
+  thead th{
     text-transform:uppercase; letter-spacing:.05em; font-size:11px; color:#4b5563;
-    border-bottom:2px solid var(--accent); padding:8px 10px; background:var(--soft); text-align:center;
+    border-bottom:2px solid var(--accent); padding:8px 10px; background:#f3f4f6; text-align:center;
   }
-  .items tbody td{ padding:10px; border-bottom:1px solid #eceff1; text-align:center }
-  .items tbody td.left{ text-align:left }
-  .items tbody tr:nth-child(2n){ background:#fafafa }
+  tbody td{ padding:10px; border-bottom:1px solid #eceff1; text-align:center; vertical-align:middle }
+  tbody td.desc-cell{ text-align:left }
+  tbody tr:nth-child(2n){ background:#fafafa }
   td.num{ white-space:nowrap }
 
   /* Totals & payment */
@@ -75,23 +72,31 @@
   .sum .row .label{ color:#6b7280 }
   .grand{ margin-top:8px; background:#111827; color:#fff; padding:12px 14px; border-radius:10px; font-weight:900; display:flex; justify-content:space-between }
 
+  /* Thanks & signature */
   .thanks{ margin-top:16px; font-weight:700 }
   .terms{ margin-top:6px; font-size:13px; color:#4b5563 }
+  .sigwrap{ display:flex; justify-content:flex-end; gap:28px; align-items:flex-end; margin-top:24px }
+  .sigline{ width:240px; border-bottom:1px solid #d1d5db; height:50px }
+  .sigmeta{ text-align:right; font-size:12px; color:#4b5563 }
 
   /* Footer */
-  .footer{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:18px; padding-top:14px; border-top:1px solid #e5e7eb; color:#374151; font-size:12px }
+  .footer{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:18px; padding-top:14px; border-top:1px solid #e5e7eb; color:#374151 }
   .footer div{ display:flex; align-items:center; gap:10px; }
   .icon{ width:24px; height:24px; border:1px solid #d1d5db; border-radius:50%; display:grid; place-items:center; }
   .icon svg{ width:14px; height:14px; stroke:#6b7280; fill:none; stroke-width:2; }
+  .footer small{ font-size:12px }
 
   /* Print */
-  @page { size:A4; margin:10mm } /* tight margin; set browser to A4 + Minimum for best fit */
+  @page { size: A4; margin: 10mm; }
   thead{ display:table-header-group }
   tfoot{ display:table-footer-group }
   @media print{
     body{ background:#fff }
-    .sheet{ box-shadow:none; border:none; }
-    .divider{ background:linear-gradient(90deg, #333 0 18%, #cfd2d6 18% 100%); } /* not solid black */
+    .sheet{ width: 190mm; margin:0 auto; box-shadow:none; border:none; padding:0 0 6mm 0; }
+    .divider{ background:#000 }
+    .footer small{ font-size:11px }
+    /* Avoid stray last blank page */
+    .sheet{ page-break-after:auto; }
   }
 </style>
 </head>
@@ -102,12 +107,13 @@
         <div class="logo" id="from_logo_box"></div>
         <div>
           <div class="t1" id="brand_name">Company</div>
-          <div class="t2" id="brand_site"></div>
+          <div class="t2" id="brand_sub"></div>
         </div>
       </div>
-      <div class="right"><div class="inv-title">INVOICE</div></div>
+      <div class="right"><div class="inv-title" id="inv_title">INVOICE</div></div>
     </header>
     <div class="divider"></div>
+    <div class="site" id="brand_site"></div>
 
     <section class="meta">
       <!-- CLIENT -->
@@ -125,28 +131,26 @@
         </div>
       </div>
 
-      <!-- INVOICE META (borderless, site removed) -->
-      <div class="meta-plain">
+      <!-- INVOICE META (borderless) -->
+      <div class="box meta-plain">
         <div class="kv">
           <div class="label">Invoice no :</div><div id="invoice_number"></div>
           <div class="label">Date :</div><div id="invoice_date"></div>
         </div>
-        <div class="desc">
-          <div style="font-weight:700; margin-bottom:2px">Invoice Description</div>
-          <div id="invoice_description"></div>
-        </div>
+        <h4 style="margin:10px 0 4px; text-transform:none; letter-spacing:0; font-weight:700; text-align:right">Invoice Description</h4>
+        <div class="desc" id="invoice_description"></div>
       </div>
     </section>
 
     <h3 class="section">Items</h3>
-    <table class="items">
+    <table>
       <thead>
         <tr>
-          <th style="text-align:left">Date of Work</th>
-          <th style="text-align:left">Work Description</th>
-          <th class="num-left">Price / Hourly Rate</th>
-          <th class="num">Cost Qty</th>
-          <th class="num">Cost Total</th>
+          <th style="width:130px">Date of Work</th>
+          <th>Description</th>
+          <th style="width:120px">Price / Hourly Rate</th>
+          <th style="width:80px">Cost Qty</th>
+          <th style="width:140px">Cost Total</th>
         </tr>
       </thead>
       <tbody id="items_body"></tbody>
@@ -155,13 +159,14 @@
     <section class="totals">
       <div class="pay">
         <h5>Payment Method :</h5>
-        <p><strong>Company ABN</strong> : <span id="from_business_no"></span></p>
+        <p><strong>Company ABN</strong> : <span id="company_abn"></span></p>
         <p><strong>Bank Name</strong> : <span id="bank_name"></span></p>
         <p><strong>Account Name</strong> : <span id="bank_acc_name"></span></p>
         <p><strong>Account Number</strong> : <span id="bank_acc_no"></span></p>
         <p><strong>Account BSB</strong> : <span id="bank_bsb"></span></p>
       </div>
       <div class="sum">
+        <div class="row"><div class="label">Total Hours :</div><div id="total_hours">0</div></div>
         <div class="row"><div class="label">Sub Total :</div><div id="subtotal">$0.00</div></div>
         <div class="row"><div class="label">GST <span id="tax_rate_label"></span> :</div><div id="taxes">$0.00</div></div>
         <div class="grand"><div>Grand Total :</div><div id="grand_total">$0.00</div></div>
@@ -171,27 +176,34 @@
     <div class="thanks">Thank you for your business!</div>
     <div class="terms" id="terms"></div>
 
+    <div class="sigwrap" id="sign_block">
+      <div class="sigline"></div>
+      <div class="sigmeta">
+        <div style="font-weight:700; margin-top:8px" id="signer"></div>
+      </div>
+    </div>
+
     <footer class="footer">
       <div>
         <span class="icon">
           <svg viewBox="0 0 24 24"><path d="M2 3h4l2 5-3 2a16 16 0 0 0 7 7l2-3 5 2v4a2 2 0 0 1-2 2c-9.94 0-18-8.06-18-18a2 2 0 0 1 2-2z"/></svg>
-        </span> <span id="from_phone_footer"></span>
+        </span> <small id="from_phone_footer"></small>
       </div>
       <div>
         <span class="icon">
           <svg viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v0l-10 7L2 6v0a2 2 0 0 1 2-2z"/><path d="M22 8l-10 7L2 8"/></svg>
-        </span> <span id="from_email_footer"></span>
+        </span> <small id="from_email_footer"></small>
       </div>
       <div>
         <span class="icon">
           <svg viewBox="0 0 24 24"><path d="M12 21s7-4.35 7-10a7 7 0 0 0-14 0c0 5.65 7 10 7 10z"/><circle cx="12" cy="11" r="3"/></svg>
-        </span> <span id="from_address_footer"></span>
+        </span> <small id="from_address_footer"></small>
       </div>
     </footer>
   </div>
 
 <script>
-  // ---------- helpers ----------
+  // ---- helpers
   const qp = new URLSearchParams(location.search);
   const get = (k, d='') => qp.get(k) ?? d;
   const ccy = get('ccy','AUD');
@@ -212,15 +224,22 @@
   }
 
   // Header brand
-  setText('brand_name', get('from_name','Invoice'));
-  setText('brand_site', get('from_web',''));  // only left, no right-side site
+  const brand = get('from_name','');
+  setText('brand_name', brand || 'Invoice');
+  setText('brand_sub', get('from_web',''));
+  setText('brand_site', get('from_web',''));
 
   // Logo
   const logo = get('from_logo','').trim();
-  if (logo) document.getElementById('from_logo_box').innerHTML = `<img src="${logo}" alt="logo">`;
+  if (logo) {
+    document.getElementById('from_logo_box').innerHTML = `<img src="${logo}" alt="logo">`;
+  }
 
-  // Invoice meta
+  // Title + invoice number
+  setText('inv_title', 'INVOICE');
   setText('invoice_number', get('invoice_number',''));
+
+  // Date formatting
   (function(){
     const raw = get('invoice_date','');
     let out = raw;
@@ -232,7 +251,6 @@
     }
     setText('invoice_date', out);
   })();
-  setText('invoice_description', get('invoice_description',''));
 
   // Client
   setText('client_name', get('client_name',''));
@@ -242,66 +260,64 @@
   setText('client_business_number', get('client_business_number',''));
   setText('client_address', get('client_address',''));
 
-  // Payment / company
-  setText('from_business_no', get('from_business_no',''));
+  // Description
+  setText('invoice_description', get('invoice_description',''));
+
+  // Payment / bank
+  // company_abn = from_business_no (ABN)
+  setText('company_abn', get('from_business_no',''));
   setText('bank_name', get('bank_name',''));
   setText('bank_acc_name', get('bank_acc_name',''));
   setText('bank_acc_no', get('bank_acc_no',''));
-  setText('bank_bsb', get('bank_routing','')); // BSB from bank_routing
+  const bsb = get('bank_bsb','') || get('bank_routing','');
+  setText('bank_bsb', bsb);
 
-  // Footer contacts from company
+  // Footer contact from company
   setText('from_phone_footer', get('from_phone',''));
   setText('from_email_footer', get('from_email',''));
   setText('from_address_footer', get('from_address',''));
 
-  // -------- Items (5 fields: date::title::price::qty::total) from ?items=... --------
+  // Items parser — rows: (date?)::title::price::qty::total
   function parseItems(str){
     if(!str) return [];
-    const rowSep = /(\|\||%7C%7C)/i;   // || or encoded
-    const colSep = /(::|%3A%3A)/i;     // :: or encoded
+    const rowSep = /(\|\||%7C%7C)/i;
+    const colSep = /(::|%3A%3A)/i;
     return str.split(rowSep).filter(s => !rowSep.test(s) && s!=='')
       .map(row => {
-        const fields = row.split(colSep).filter(s => !colSep.test(s));
-        if (fields.length >= 5){
-          const [date='', title='', price='', qty='', total=''] = fields;
-          return {
-            date:  decodeURIComponent(date || ''),
-            title: decodeURIComponent(title || ''),
-            price: clean(price),
-            qty:   parseFloat(qty || 0) || 0,
-            total: clean(total)
-          };
-        } else {
-          // fallback for older 4-field rows (no date)
-          const [title='', price='', qty='', total=''] = fields;
-          return {
-            date:  '',
-            title: decodeURIComponent(title || ''),
-            price: clean(price),
-            qty:   parseFloat(qty || 0) || 0,
-            total: clean(total)
-          };
-        }
+        const parts = row.split(colSep).filter(s => !colSep.test(s));
+        // support 4 or 5 fields
+        let date='', title='', price='', qty='', total='';
+        if(parts.length === 5){ [date,title,price,qty,total] = parts; }
+        else { [title,price,qty,total] = parts; }
+        return {
+          date: decodeURIComponent(date || ''),
+          title: decodeURIComponent(title || ''),
+          price: clean(price),
+          qty: parseFloat(qty || 0) || 0,
+          total: clean(total)
+        };
       });
   }
 
   const items = parseItems(get('items',''));
   const tbody = document.getElementById('items_body');
-
   let subtotalFromItems = 0;
+
   items.forEach(it => {
     subtotalFromItems += it.total || 0;
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td class="left">${esc(it.date)}</td>
-      <td class="left">${esc(it.title)}</td>
-      <td class="num-left">${money(it.price)}</td>
+      <td>${esc(it.date)}</td>
+      <td class="desc-cell">${esc(it.title)}</td>
+      <td class="num">${money(it.price)}</td>
       <td>${(it.qty ?? 0).toLocaleString()}</td>
       <td class="num">${money(it.total)}</td>`;
     tbody.appendChild(tr);
   });
 
-  // Totals
+  // Totals + hours
+  setText('total_hours', get('total_hours',''));
+
   let subtotal = clean(get('subtotal',''));
   if (!subtotal && subtotalFromItems) subtotal = subtotalFromItems;
 
@@ -321,14 +337,21 @@
     (taxRate || taxRate===0) ? `(${(taxRate*100).toFixed(0)}%)` : '';
   setText('grand_total', money(grand));
 
-  // Optional terms
+  // Signature
+  const signerText = [get('signer_name','').trim(), get('signer_role','').trim()].filter(Boolean).join(' · ');
+  if (signerText) document.getElementById('signer').textContent = signerText;
+  else document.getElementById('sign_block').style.display = 'none';
+
+  // Terms (optional)
   const terms = get('terms','').trim();
   if(terms) document.getElementById('terms').textContent = terms;
   else document.getElementById('terms').style.display = 'none';
 
-  // Auto-print
+  // Auto-print (prints; user’s dialog controls destination)
   const autoPrint = /^(1|true)$/i.test(get('print','').trim());
-  if (autoPrint) window.addEventListener('load', () => { try { setTimeout(() => window.print(), 0); } catch {} });
+  if (autoPrint) {
+    window.addEventListener('load', () => { try { setTimeout(() => window.print(), 0); } catch {} });
+  }
 </script>
 </body>
 </html>
