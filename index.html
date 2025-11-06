@@ -104,7 +104,46 @@
     .footer small{ font-size:11px }
     .sheet{ page-break-after:auto; }
   }
+
+  /* Print */
+  @page { size: A4; margin: 10mm; }
+  thead{ display:table-header-group }
+  tfoot{ display:table-footer-group }
+
+  @media print{
+    body{ background:#fff }
+    .sheet{ width: 190mm; margin:0 auto; box-shadow:none; border:none; padding:0 0 6mm 0; }
+    /* keep gradient bar in print — no override */
+    .footer small{ font-size:11px }
+    .sheet{ page-break-after:auto; }
+  }
+
+  /* ===== MOBILE PRINT PATCH (iOS) ===== */
+  @page { size: A4; margin: 6mm; } /* ajusta margem */
+  @media print {
+    .sheet{
+      width: calc(210mm - 12mm);
+      margin: 0 auto;
+      padding: 4mm 4mm 6mm;
+      border: none;
+      box-shadow: none;
+      page-break-inside: avoid;
+    }
+    body{ font-size: 13px; }
+    table thead th{ font-size: 10px; }
+    tbody td{ padding: 8px; }
+  }
+  @supports (-webkit-touch-callout: none) {
+    @media print {
+      .sheet{
+        width: calc(210mm - 10mm);
+        padding: 4mm;
+      }
+    }
+  }
 </style>
+
+  
 </head>
 <body>
   <div class="sheet">
