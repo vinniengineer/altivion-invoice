@@ -8,7 +8,10 @@
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
 <style>
-  :root{ --bg:#f6f7f8; --paper:#fff; --ink:#111827; --muted:#6b7280; --line:#e5e7eb; --accent:#2f2f2f; }
+  :root{
+    --bg:#f6f7f8; --paper:#fff; --ink:#111827; --muted:#6b7280; --line:#e5e7eb; --accent:#2f2f2f;
+    --soft:#f3f4f6;
+  }
   *{ box-sizing:border-box }
   html,body{ height:100% }
   body{
@@ -31,40 +34,38 @@
   .t2{ font-size:12px; color:var(--muted); margin-top:2px }
   .inv-title{ font-size:32px; letter-spacing:.04em; font-weight:900; color:var(--accent) }
 
-  /* Robust printable bar: left black segment + grey rest */
+  /* thin divider; keep print friendly (not solid black) */
   .divider{
-    height:2px; margin:12px 0 4px; border-radius:2px;
-    background:
-      linear-gradient(#111827,#111827) left/35mm 2px no-repeat,
-      linear-gradient(#c7c9cc,#c7c9cc) left/100% 2px no-repeat;
+    height:3px; border-radius:3px; margin:12px 0 4px;
+    background:linear-gradient(90deg, #2e2e2e 0 18%, #cfd2d6 18% 100%);
   }
 
-  /* Top-right site line removed per request */
-  .site{ display:none; }
-
-  /* Meta */
+  /* Top meta */
   .meta{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:8px }
   .box{ border:1px solid var(--line); border-radius:10px; padding:14px 16px; background:#fff }
   .box h4{ margin:0 0 8px; font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:#4b5563 }
   .mtitle{ font-weight:800; font-size:18px; margin:0 0 6px }
   .kv{ display:grid; grid-template-columns:140px 1fr; gap:6px 12px; font-size:13px }
   .label{ color:var(--muted) }
+
+  /* right meta is borderless */
   .meta-plain{ border:none; background:transparent; padding:0; text-align:right; }
-  .meta-plain .kv{ grid-template-columns:1fr 200px; margin-top:4px } /* a little wider for long dates */
+  .meta-plain .kv{ grid-template-columns:1fr 140px; margin-top:4px }
+  .desc{ margin-top:6px; font-size:13px; color:#374151; text-align:right }
 
   /* Items */
   h3.section{ margin:18px 0 10px; font-size:16px; font-weight:800; letter-spacing:.02em; text-align:center }
-  table{ width:100%; border-collapse:collapse; }
-  thead th{
+  table.items{ width:100%; border-collapse:collapse; }
+  .items thead th{
     text-transform:uppercase; letter-spacing:.05em; font-size:11px; color:#4b5563;
-    border-bottom:2px solid var(--accent); padding:8px 10px; background:#f3f4f6; text-align:center;
+    border-bottom:2px solid var(--accent); padding:8px 10px; background:var(--soft); text-align:center;
   }
-  tbody td{ padding:10px; border-bottom:1px solid #eceff1; text-align:center }
-  tbody td.desc-cell{ text-align:left }
-  tbody tr:nth-child(2n){ background:#fafafa }
+  .items tbody td{ padding:10px; border-bottom:1px solid #eceff1; text-align:center }
+  .items tbody td.left{ text-align:left }
+  .items tbody tr:nth-child(2n){ background:#fafafa }
   td.num{ white-space:nowrap }
 
-  /* Totals / payment */
+  /* Totals & payment */
   .totals{ display:grid; grid-template-columns:1fr 260px; gap:16px; margin-top:16px; align-items:start }
   .pay{ border:1px solid var(--line); border-radius:10px; padding:12px 14px; background:#fff }
   .pay h5{ margin:0 0 8px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; font-size:12px; color:#4b5563 }
@@ -74,31 +75,23 @@
   .sum .row .label{ color:#6b7280 }
   .grand{ margin-top:8px; background:#111827; color:#fff; padding:12px 14px; border-radius:10px; font-weight:900; display:flex; justify-content:space-between }
 
-  /* Thanks & signature */
   .thanks{ margin-top:16px; font-weight:700 }
   .terms{ margin-top:6px; font-size:13px; color:#4b5563 }
-  .sigwrap{ display:flex; justify-content:flex-end; gap:28px; align-items:flex-end; margin-top:24px }
-  .sigline{ width:240px; border-bottom:1px solid #d1d5db; height:50px }
-  .sigmeta{ text-align:right; font-size:12px; color:#4b5563 }
 
-  /* Footer (smaller so address won’t wrap) */
+  /* Footer */
   .footer{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:18px; padding-top:14px; border-top:1px solid #e5e7eb; color:#374151; font-size:12px }
-  .footer div{ display:flex; align-items:center; gap:8px; }
+  .footer div{ display:flex; align-items:center; gap:10px; }
   .icon{ width:24px; height:24px; border:1px solid #d1d5db; border-radius:50%; display:grid; place-items:center; }
   .icon svg{ width:14px; height:14px; stroke:#6b7280; fill:none; stroke-width:2; }
 
   /* Print */
-  @page { size:A4; margin:10mm } /* ≈ “Minimum” */
+  @page { size:A4; margin:10mm } /* tight margin; set browser to A4 + Minimum for best fit */
   thead{ display:table-header-group }
   tfoot{ display:table-footer-group }
   @media print{
     body{ background:#fff }
-    .sheet{ box-shadow:none; border:none; margin:0; width:auto; padding:0 }
-    .divider{
-      background:
-        linear-gradient(#000,#000) left/35mm 2px no-repeat,
-        linear-gradient(#c7c9cc,#c7c9cc) left/100% 2px no-repeat;
-    }
+    .sheet{ box-shadow:none; border:none; }
+    .divider{ background:linear-gradient(90deg, #333 0 18%, #cfd2d6 18% 100%); } /* not solid black */
   }
 </style>
 </head>
@@ -109,14 +102,12 @@
         <div class="logo" id="from_logo_box"></div>
         <div>
           <div class="t1" id="brand_name">Company</div>
-          <div class="t2" id="brand_sub"></div>
+          <div class="t2" id="brand_site"></div>
         </div>
       </div>
-      <div class="right"><div class="inv-title" id="inv_title">INVOICE</div></div>
+      <div class="right"><div class="inv-title">INVOICE</div></div>
     </header>
-
     <div class="divider"></div>
-    <!-- removed top-right website line -->
 
     <section class="meta">
       <!-- CLIENT -->
@@ -134,25 +125,28 @@
         </div>
       </div>
 
-      <!-- RIGHT META as kv rows (no bordered box, no site on top-right) -->
-      <div class="box meta-plain">
+      <!-- INVOICE META (borderless, site removed) -->
+      <div class="meta-plain">
         <div class="kv">
           <div class="label">Invoice no :</div><div id="invoice_number"></div>
           <div class="label">Date :</div><div id="invoice_date"></div>
-          <div class="label">Invoice Description :</div><div id="invoice_description"></div>
+        </div>
+        <div class="desc">
+          <div style="font-weight:700; margin-bottom:2px">Invoice Description</div>
+          <div id="invoice_description"></div>
         </div>
       </div>
     </section>
 
     <h3 class="section">Items</h3>
-    <table>
+    <table class="items">
       <thead>
         <tr>
-          <th style="width:60px">No</th>
-          <th>Description</th>
-          <th style="width:80px">Qty</th>
-          <th style="width:120px">Price</th>
-          <th style="width:140px">Total</th>
+          <th style="text-align:left">Date of Work</th>
+          <th style="text-align:left">Work Description</th>
+          <th class="num-left">Price / Hourly Rate</th>
+          <th class="num">Cost Qty</th>
+          <th class="num">Cost Total</th>
         </tr>
       </thead>
       <tbody id="items_body"></tbody>
@@ -161,7 +155,7 @@
     <section class="totals">
       <div class="pay">
         <h5>Payment Method :</h5>
-        <p><strong>Company ABN</strong> : <span id="company_abn"></span></p>
+        <p><strong>Company ABN</strong> : <span id="from_business_no"></span></p>
         <p><strong>Bank Name</strong> : <span id="bank_name"></span></p>
         <p><strong>Account Name</strong> : <span id="bank_acc_name"></span></p>
         <p><strong>Account Number</strong> : <span id="bank_acc_no"></span></p>
@@ -176,13 +170,6 @@
 
     <div class="thanks">Thank you for your business!</div>
     <div class="terms" id="terms"></div>
-
-    <div class="sigwrap" id="sign_block">
-      <div class="sigline"></div>
-      <div class="sigmeta">
-        <div style="font-weight:700; margin-top:8px" id="signer"></div>
-      </div>
-    </div>
 
     <footer class="footer">
       <div>
@@ -204,14 +191,15 @@
   </div>
 
 <script>
-  // --- helpers
+  // ---------- helpers ----------
   const qp = new URLSearchParams(location.search);
   const get = (k, d='') => qp.get(k) ?? d;
   const ccy = get('ccy','AUD');
 
   const clean = v => {
     if(v==null||v==='') return 0;
-    const n = parseFloat(String(v).replace(/[^0-9.-]/g,'')); return isNaN(n)?0:n;
+    const n = parseFloat(String(v).replace(/[^0-9.-]/g,''));
+    return isNaN(n)?0:n;
   };
   const money = n => Number(n||0).toLocaleString(undefined,{style:'currency',currency:ccy});
   const esc = s => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -223,22 +211,19 @@
     else { el.textContent = ''; el.style.display='none'; }
   }
 
-  // Brand
+  // Header brand
   setText('brand_name', get('from_name','Invoice'));
-  setText('brand_sub', get('from_web',''));
+  setText('brand_site', get('from_web',''));  // only left, no right-side site
 
   // Logo
   const logo = get('from_logo','').trim();
   if (logo) document.getElementById('from_logo_box').innerHTML = `<img src="${logo}" alt="logo">`;
 
-  // Title
-  document.getElementById('inv_title').textContent = 'INVOICE';
-
-  // Right meta
+  // Invoice meta
   setText('invoice_number', get('invoice_number',''));
-
   (function(){
-    const raw = get('invoice_date',''); let out = raw;
+    const raw = get('invoice_date','');
+    let out = raw;
     const d = new Date(raw);
     if (!isNaN(d.getTime())) {
       const day = String(d.getDate()).padStart(2,'0');
@@ -257,41 +242,61 @@
   setText('client_business_number', get('client_business_number',''));
   setText('client_address', get('client_address',''));
 
-  // Payment / bank
-  setText('company_abn', get('company_abn', get('from_business_no',''))); // ABN from from_business_no by default
+  // Payment / company
+  setText('from_business_no', get('from_business_no',''));
   setText('bank_name', get('bank_name',''));
   setText('bank_acc_name', get('bank_acc_name',''));
   setText('bank_acc_no', get('bank_acc_no',''));
-  // split BSB as its own (no “/Route”)
-  setText('bank_bsb', get('bank_bsb', get('bank_routing','')));
+  setText('bank_bsb', get('bank_routing','')); // BSB from bank_routing
 
-  // Footer from company
+  // Footer contacts from company
   setText('from_phone_footer', get('from_phone',''));
   setText('from_email_footer', get('from_email',''));
   setText('from_address_footer', get('from_address',''));
 
-  // Items parser — "title::price::qty::total" joined by "||"
+  // -------- Items (5 fields: date::title::price::qty::total) from ?items=... --------
   function parseItems(str){
     if(!str) return [];
-    const rowSep = /(\|\||%7C%7C)/i, colSep = /(::|%3A%3A)/i;
-    return str.split(rowSep).filter(s => !rowSep.test(s) && s!=='').map(row => {
-      const fields = row.split(colSep).filter(s => !colSep.test(s));
-      const [title='', price='', qty='', total=''] = fields;
-      return { title: decodeURIComponent(title||''), price: clean(price), qty: parseFloat(qty||0)||0, total: clean(total) };
-    });
+    const rowSep = /(\|\||%7C%7C)/i;   // || or encoded
+    const colSep = /(::|%3A%3A)/i;     // :: or encoded
+    return str.split(rowSep).filter(s => !rowSep.test(s) && s!=='')
+      .map(row => {
+        const fields = row.split(colSep).filter(s => !colSep.test(s));
+        if (fields.length >= 5){
+          const [date='', title='', price='', qty='', total=''] = fields;
+          return {
+            date:  decodeURIComponent(date || ''),
+            title: decodeURIComponent(title || ''),
+            price: clean(price),
+            qty:   parseFloat(qty || 0) || 0,
+            total: clean(total)
+          };
+        } else {
+          // fallback for older 4-field rows (no date)
+          const [title='', price='', qty='', total=''] = fields;
+          return {
+            date:  '',
+            title: decodeURIComponent(title || ''),
+            price: clean(price),
+            qty:   parseFloat(qty || 0) || 0,
+            total: clean(total)
+          };
+        }
+      });
   }
+
   const items = parseItems(get('items',''));
   const tbody = document.getElementById('items_body');
-  let subtotalFromItems = 0;
 
-  items.forEach((it, idx) => {
+  let subtotalFromItems = 0;
+  items.forEach(it => {
     subtotalFromItems += it.total || 0;
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td>${idx+1}</td>
-      <td class="desc-cell">${esc(it.title)}</td>
+      <td class="left">${esc(it.date)}</td>
+      <td class="left">${esc(it.title)}</td>
+      <td class="num-left">${money(it.price)}</td>
       <td>${(it.qty ?? 0).toLocaleString()}</td>
-      <td class="num">${money(it.price)}</td>
       <td class="num">${money(it.total)}</td>`;
     tbody.appendChild(tr);
   });
@@ -316,21 +321,14 @@
     (taxRate || taxRate===0) ? `(${(taxRate*100).toFixed(0)}%)` : '';
   setText('grand_total', money(grand));
 
-  // Signature
-  const signerText = [get('signer_name','').trim(), get('signer_role','').trim()].filter(Boolean).join(' · ');
-  if (signerText) document.getElementById('signer').textContent = signerText;
-  else document.getElementById('sign_block').style.display = 'none';
-
-  // Terms (optional)
+  // Optional terms
   const terms = get('terms','').trim();
   if(terms) document.getElementById('terms').textContent = terms;
   else document.getElementById('terms').style.display = 'none';
 
   // Auto-print
   const autoPrint = /^(1|true)$/i.test(get('print','').trim());
-  if (autoPrint) {
-    window.addEventListener('load', () => { try { setTimeout(() => window.print(), 0); } catch {} });
-  }
+  if (autoPrint) window.addEventListener('load', () => { try { setTimeout(() => window.print(), 0); } catch {} });
 </script>
 </body>
 </html>
