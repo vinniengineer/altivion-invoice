@@ -228,6 +228,15 @@
   const get = (k, d='') => qp.get(k) ?? d;
   const ccy = get('ccy','AUD');
 
+  // NEW: dynamic accent color from ?template_colour
+  (function(){
+    const col = (get('template_colour','') || '').trim();
+    if(col){
+      // Accepts hex (# encoded as %23), rgb(), hsl(), named colors, etc.
+      document.documentElement.style.setProperty('--accent', col);
+    }
+  })();
+
   const clean = v => {
     if(v==null||v==='') return 0;
     const n = parseFloat(String(v).replace(/[^0-9.-]/g,'')); return isNaN(n)?0:n;
@@ -252,7 +261,8 @@
   if (logo) { document.getElementById('from_logo_box').innerHTML = `<img src="${logo}" alt="logo">`; }
 
   // Title + invoice number
-  setText('inv_title', 'INVOICE');
+  // NEW: title comes from ?tax_invoice_title (fallback: INVOICE)
+  setText('inv_title', get('tax_invoice_title','INVOICE'));
   setText('invoice_number', get('invoice_number',''));
 
   // Date formatting
