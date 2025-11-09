@@ -43,6 +43,9 @@
   }
   .site{ display:none; }
 
+  /* Hide the empty logo container so no border/space shows */
+.logo:empty{ display:none; }
+
   /* Meta blocks */
   .meta{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:8px }
   .box{ border:1px solid var(--line); border-radius:10px; padding:14px 16px; background:#fff }
@@ -257,13 +260,17 @@
   setText('brand_site',''); // hidden
 
   // Logo
-  const logo = get('from_logo','').trim();
-  if (logo) { document.getElementById('from_logo_box').innerHTML = `<img src="${logo}" alt="logo">`; }
-
-  // Title + invoice number
-  // NEW: title comes from ?tax_invoice_title (fallback: INVOICE)
-  setText('inv_title', get('tax_invoice_title','INVOICE'));
-  setText('invoice_number', get('invoice_number',''));
+const logoBox = document.getElementById('from_logo_box');
+const logo = (get('from_logo','') || '').trim();
+if (logo) {
+  const img = new Image();
+  img.alt = 'logo';
+  img.onload  = () => { logoBox.innerHTML = ''; logoBox.appendChild(img); };
+  img.onerror = () => { logoBox.style.display = 'none'; };
+  img.src = logo;
+} else {
+  logoBox.style.display = 'none';
+}
 
   // Date formatting
   (function(){
