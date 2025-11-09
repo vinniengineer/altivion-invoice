@@ -10,7 +10,7 @@
 <style>
   :root{
     --bg:#f6f7f8; --paper:#fff; --ink:#111827; --muted:#6b7280; --line:#e5e7eb; --accent:#2f2f2f;
-    --pill:#d1d5db; /* light grey for Grand Total */
+    --pill:#d1d5db;
   }
   *{ box-sizing:border-box }
   html,body{ height:auto; min-height:100%; }
@@ -19,7 +19,6 @@
     font:13.5px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     -webkit-print-color-adjust:exact; print-color-adjust:exact;
   }
-
   .sheet{
     width:900px; max-width:95vw; margin:22px auto;
     background:var(--paper); border:1px solid var(--line); border-radius:12px;
@@ -30,21 +29,24 @@
   /* Header */
   .header{ display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center }
   .brand{ display:flex; gap:12px; align-items:center }
-  .logo{ width:56px; height:56px; border:1px solid var(--line); border-radius:12px; display:grid; place-items:center; overflow:hidden; background:#fff }
+  .logo{
+    width:56px; height:56px; border:1px solid var(--line); border-radius:12px;
+    display:grid; place-items:center; overflow:hidden; background:#fff
+  }
+  .logo:empty{ display:none; } /* hide empty logo box */
   .logo img{ max-width:100%; max-height:100%; object-fit:contain }
   .t1{ font-size:20px; font-weight:800; letter-spacing:.02em }
   .t2{ font-size:12px; color:var(--muted); margin-top:2px }
-  .inv-title{ font-size:30px; letter-spacing:.04em; font-weight:900; color:var(--accent) }
 
-  /* Top divider only */
+  /* Neutral title (not accent) */
+  .inv-title{ font-size:30px; letter-spacing:.04em; font-weight:900; color:var(--ink) }
+
+  /* Top divider uses accent */
   .divider{
     height:3px; border-radius:3px; margin:12px 0 4px;
     background:linear-gradient(90deg, var(--accent) 0 15%, #c7c9cc 15% 100%);
   }
   .site{ display:none; }
-
-  /* Hide the empty logo container so no border/space shows */
-.logo:empty{ display:none; }
 
   /* Meta blocks */
   .meta{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:8px }
@@ -54,17 +56,18 @@
   .kv{ display:grid; grid-template-columns:140px 1fr; gap:6px 12px; font-size:13px }
   .label{ color:var(--muted) }
 
-  .meta-plain{ border:none; background:transparent; padding:0; text-align:right; }
-  .meta-plain .kv{ grid-template-columns:1fr 140px; margin-top:4px }
-  .desc{ margin-top:8px; font-size:13px; color:#374151; text-align:right }
+  /* Right meta is borderless but LEFT-aligned and same grid as left */
+  .meta-plain{ border:none; background:transparent; padding:0; text-align:left; }
+  .meta-plain .kv{ grid-template-columns:140px 1fr; margin-top:4px }
+  .meta-plain h4{ margin:10px 0 4px; text-transform:none; letter-spacing:0; font-weight:700; text-align:left }
+  .desc{ margin-top:8px; font-size:13px; color:#374151; }
 
   /* Items */
   h3.section{ margin:18px 0 10px; font-size:15px; font-weight:800; letter-spacing:.02em; text-align:center }
   table{ width:100%; border-collapse:collapse; }
   thead th{
     text-transform:uppercase; letter-spacing:.05em; font-size:10.5px; color:#4b5563;
-    border-bottom:none; /* removed underline -> bar stays only on top */
-    padding:8px 10px; background:#f3f4f6; text-align:center;
+    border-bottom:none; padding:8px 10px; background:#f3f4f6; text-align:center;
   }
   tbody td{ padding:9px 10px; border-bottom:1px solid #eceff1; text-align:center; vertical-align:middle; font-size:12.5px }
   tbody td.desc-cell{ text-align:left }
@@ -101,14 +104,10 @@
   .icon svg{ width:18px; height:18px; stroke:#6b7280; fill:none; stroke-width:2; display:block; }
   .footer small{ font-size:12px }
 
-  /* ===== PRINT FIX — FORCE SINGLE PAGE ON iPHONE ===== */
+  /* Print */
   @media print {
     @page { size: A4 portrait; margin: 5mm; }
-    .sheet{
-      width: 200mm; margin: 0 auto; padding: 3mm 4mm 5mm;
-      border: none; box-shadow: none;
-      page-break-inside: avoid; break-inside: avoid;
-    }
+    .sheet{ width: 200mm; margin: 0 auto; padding: 3mm 4mm 5mm; border: none; box-shadow: none; }
     body{ font-size: 12.5px; }
     table thead th{ font-size: 10px; }
     tbody td{ padding: 6px; }
@@ -153,13 +152,13 @@
         </div>
       </div>
 
-      <!-- INVOICE META (borderless) -->
+      <!-- INVOICE META (borderless, aligned) -->
       <div class="box meta-plain">
         <div class="kv">
           <div class="label">Invoice no :</div><div id="invoice_number"></div>
           <div class="label">Date :</div><div id="invoice_date"></div>
         </div>
-        <h4 style="margin:10px 0 4px; text-transform:none; letter-spacing:0; font-weight:700; text-align:right">Invoice Description</h4>
+        <h4>Invoice Description</h4>
         <div class="desc" id="invoice_description"></div>
       </div>
     </section>
@@ -213,7 +212,6 @@
       </div>
       <div>
         <span class="icon">
-          <!-- Clean envelope icon -->
           <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" ry="2"/><path d="M3 7l9 6 9-6"/></svg>
         </span> <small id="from_email_footer"></small>
       </div>
@@ -231,13 +229,10 @@
   const get = (k, d='') => qp.get(k) ?? d;
   const ccy = get('ccy','AUD');
 
-  // NEW: dynamic accent color from ?template_colour
+  // Accent color from ?template_colour
   (function(){
     const col = (get('template_colour','') || '').trim();
-    if(col){
-      // Accepts hex (# encoded as %23), rgb(), hsl(), named colors, etc.
-      document.documentElement.style.setProperty('--accent', col);
-    }
+    if(col){ document.documentElement.style.setProperty('--accent', col); }
   })();
 
   const clean = v => {
@@ -260,17 +255,20 @@
   setText('brand_site',''); // hidden
 
   // Logo
-const logoBox = document.getElementById('from_logo_box');
-const logo = (get('from_logo','') || '').trim();
-if (logo) {
-  const img = new Image();
-  img.alt = 'logo';
-  img.onload  = () => { logoBox.innerHTML = ''; logoBox.appendChild(img); };
-  img.onerror = () => { logoBox.style.display = 'none'; };
-  img.src = logo;
-} else {
-  logoBox.style.display = 'none';
-}
+  const logoBox = document.getElementById('from_logo_box');
+  const logo = (get('from_logo','') || '').trim();
+  if (logo) {
+    const img = new Image();
+    img.alt = 'logo';
+    img.onload  = () => { logoBox.innerHTML = ''; logoBox.appendChild(img); };
+    img.onerror = () => { logoBox.style.display = 'none'; };
+    img.src = logo;
+  } else {
+    logoBox.style.display = 'none';
+  }
+
+  // RIGHT META — set values (now includes invoice_number)
+  setText('invoice_number', get('invoice_number',''));
 
   // Date formatting
   (function(){
