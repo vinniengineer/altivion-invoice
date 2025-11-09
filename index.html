@@ -267,7 +267,10 @@
     logoBox.style.display = 'none';
   }
 
-  // RIGHT META — set values (now includes invoice_number)
+  // Title from ?tax_invoice_title (fallback "INVOICE")
+  setText('inv_title', get('tax_invoice_title','INVOICE'));
+
+  // RIGHT META — set values
   setText('invoice_number', get('invoice_number',''));
 
   // Date formatting
