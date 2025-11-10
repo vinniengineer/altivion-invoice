@@ -88,10 +88,20 @@
   .sum{ border:1px solid var(--line); border-radius:10px; background:#fff; padding:12px 14px }
   .sum .row{ display:flex; justify-content:space-between; margin:4px 0 }
   .sum .row .label{ color:#6b7280 }
-  .grand{
-    margin-top:8px; background:var(--pill); color:#111827; padding:12px 14px; border-radius:12px;
-    font-weight:900; display:flex; justify-content:space-between
-  }
+  
+  /* Grand Total pill */
+.grand{
+  margin-top:8px;
+  background:#f9fafb;              /* soft grey fill */
+  color:#111827;
+  padding:12px 14px;
+  border-radius:12px;               /* use 9999px if you want a rounder pill */
+  border:1px solid var(--line);     /* thin outline */
+  font-weight:900;
+  display:flex;
+  justify-content:space-between;
+}
+
 
   /* Thanks, signer, terms — match Modern behavior */
   .thanks{ margin-top:16px; font-weight:700; text-align:right }
