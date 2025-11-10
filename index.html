@@ -90,18 +90,17 @@
   .sum .row .label{ color:#6b7280 }
   
   /* Grand Total pill */
-.grand{
-  margin-top:8px;
-  background:#f3f4f6;              /* soft grey fill */
-  color:#111827;
-  padding:12px 14px;
-  border-radius:12px;               /* use 9999px if you want a rounder pill */
-  border:1px solid var(--line);     /* thin outline */
-  font-weight:900;
-  display:flex;
-  justify-content:space-between;
-}
-
+  .grand{
+    margin-top:8px;
+    background:#f3f4f6;              /* soft grey fill */
+    color:#111827;
+    padding:12px 14px;
+    border-radius:12px;               /* use 9999px if you want a rounder pill */
+    border:1px solid var(--line);     /* thin outline */
+    font-weight:900;
+    display:flex;
+    justify-content:space-between;
+  }
 
   /* Thanks, signer, terms — match Modern behavior */
   .thanks{ margin-top:16px; font-weight:700; text-align:right }
@@ -110,18 +109,28 @@
   #signer{ font-weight:700; margin-top:2px }
   .terms{ margin-top:12px; font-size:12px; color:#4b5563; text-align:right }
 
-  /* Footer */
+  /* ===== Footer (icons row) — smaller icons, centered, wider address ===== */
   .footer{
-    display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:18px; padding-top:14px;
-    border-top:1px solid #e5e7eb; color:#374151
+    display:grid;
+    grid-template-columns: auto auto minmax(320px, 1fr); /* give address more room */
+    justify-content:center;         /* center entire group */
+    gap:18px 32px;
+    margin-top:18px; padding-top:14px;
+    border-top:1px solid #e5e7eb; color:#374151;
+    text-align:center;
   }
-  .footer div{ display:flex; align-items:center; gap:10px }
+  .footer div{ display:flex; align-items:center; gap:10px; justify-content:center }
   .icon{
-    width:28px; height:28px; border:1px solid #d1d5db; border-radius:50%; display:grid; place-items:center;
-    padding:3px; background:#fff;
+    width:22px; height:22px;                 /* smaller circle */
+    border:1px solid #d1d5db; border-radius:50%;
+    display:grid; place-items:center; padding:2px; background:#fff;
   }
-  .icon svg{ width:18px; height:18px; stroke:#6b7280; fill:none; stroke-width:2; display:block }
-  .footer small{ font-size:12px }
+  .icon svg{ width:14px; height:14px; stroke:#6b7280; fill:none; stroke-width:2; display:block }
+  .footer small{ font-size:12px; white-space:nowrap }
+  /* allow address to take space but truncate gracefully if too long */
+  .footer div:nth-child(3) small{
+    max-width:420px; display:inline-block; overflow:hidden; text-overflow:ellipsis;
+  }
 
   /* Print */
   @media print {
